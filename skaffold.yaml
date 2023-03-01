@@ -1,0 +1,26 @@
+apiVersion: skaffold/v4beta2
+kind: Config
+metadata:
+  name: ticketing
+build:
+  local:
+    push: false
+  artifacts:
+  - image: jym272/ticketing-auth-api
+    context: auth-api
+    docker:
+      dockerfile: dev.Dockerfile
+    sync:
+      manual:
+        - src: 'src/**/*.ts'
+          dest: /app
+manifests:
+  kustomize:
+    paths:
+    - k8s/base
+profiles:
+- name: local
+  manifests:
+    kustomize:
+      paths:
+      - k8s/overlay/local
