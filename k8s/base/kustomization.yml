@@ -2,3 +2,4 @@ resources:
   - postgres-db/auth-db.yaml
   - apis/auth-api.yaml
   - ingress.yaml
+  - adminer.yaml
