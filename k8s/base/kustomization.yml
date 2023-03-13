@@ -3,3 +3,7 @@ resources:
   - apis/auth-api.yaml
   - ingress.yaml
   - adminer.yaml
+secretGenerator:
+  - name: auth-api-secret
+    envs:
+      - .env.secret

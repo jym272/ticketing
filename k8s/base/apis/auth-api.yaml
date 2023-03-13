@@ -63,6 +63,12 @@ spec:
             - name: POSTGRES_PORT
               value: "5432"
             - name: PASSWORD_PEPPER
-              value: =XeDRMzq9HpuWL2ZYBw2BDi1sxjT5dnOSdOFEU00wvpo=
+              valueFrom:
+                secretKeyRef:
+                  name: auth-api-secret
+                  key: PASSWORD_PEPPER
             - name: JWT_SECRET
-              value: =Q5nT18OkUuHam/Y5BRbzY3SYlwNqpJRdvYVwS/gzecc=
+              valueFrom:
+                secretKeyRef:
+                  name: auth-api-secret
+                  key: JWT_SECRET
