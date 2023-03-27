@@ -14,6 +14,16 @@ build:
       manual:
         - src: 'src/**/*.ts'
           dest: /app
+  - image: jym272/ticketing-frontend
+    context: client
+    docker:
+      dockerfile: dev.Dockerfile
+    sync:
+      manual:
+        - src: 'src/**/*.ts'
+          dest: /app
+        - src: 'src/**/*.tsx'
+          dest: /app
 manifests:
   kustomize:
     paths:

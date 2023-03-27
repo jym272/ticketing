@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  selector:
+    api: frontend
+  ports:
+    - protocol: TCP
+      port: 3000
+      name: frontend
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      api: frontend
+  template:
+    metadata:
+      labels:
+        api: frontend
+    spec:
+#      initContainers:
+#        - name: init-postgres
+#          imagePullPolicy: IfNotPresent
+#          image: busybox:1.36.0
+#          command:
+#            [
+#              "sh",
+#              "-c",
+#              "until nc -vz query-api.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local $QUERY_API_SERVICE_PORT_QUERY_API; do echo waiting for db; sleep 2; done",
+#            ]
+      containers:
+        - name: frontend
+          image: jym272/ticketing-frontend
+          env:
+            # kubectl get ns
+            - name: INGRESS_NS
+              value: ingress-nginx
+            # kubectl get svc -n ingress-nginx
+            - name: INGRESS_SVC
+              value: ingress-nginx-controller
+
+

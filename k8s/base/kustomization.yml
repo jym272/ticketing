@@ -1,6 +1,7 @@
 resources:
   - postgres-db/auth-db.yaml
   - apis/auth-api.yaml
+  - client/frontend.yaml
   - ingress.yaml
   - adminer.yaml
 secretGenerator:
