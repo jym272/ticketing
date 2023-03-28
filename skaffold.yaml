@@ -6,6 +6,14 @@ build:
   local:
     push: false
   artifacts:
+  - image: jym272/ticketing-tickets-api
+    context: tickets-api
+    docker:
+      dockerfile: dev.Dockerfile
+    sync:
+      manual:
+        - src: 'src/**/*.ts'
+          dest: /app
   - image: jym272/ticketing-auth-api
     context: auth-api
     docker:

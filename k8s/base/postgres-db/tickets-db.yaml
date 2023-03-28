@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-auth
+  name: db-tickets
 spec:
   selector:
-    db: auth
+    db: tickets
   ports:
     - protocol: TCP
       port: 5432
@@ -13,37 +13,37 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db-auth
+  name: db-tickets
 spec:
   replicas: 1
   selector:
     matchLabels:
-      db: auth
+      db: tickets
   template:
     metadata:
       labels:
-        db: auth
+        db: tickets
     spec:
       containers:
-        - name: db-auth
+        - name: db-tickets
           image: postgres:15.1
           imagePullPolicy: IfNotPresent
           env:
             - name: POSTGRES_USER
               value: jorge
             - name: POSTGRES_DB
-              value: auth
+              value: tickets
             - name: POSTGRES_PASSWORD
               value: "123456"
           livenessProbe:
             exec:
-              command: ["psql", "-U", "jorge", "-d", "auth", "-c", "SELECT 1"]
+              command: ["psql", "-U", "jorge", "-d", "tickets", "-c", "SELECT 1"]
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
           readinessProbe:
             exec:
-              command: ["psql", "-U", "jorge", "-d", "auth", "-c", "SELECT 1"]
+              command: ["psql", "-U", "jorge", "-d", "tickets", "-c", "SELECT 1"]
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
