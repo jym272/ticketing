@@ -9,6 +9,9 @@ spec:
     - protocol: TCP
       port: 4222
       name: nats-client
+    - protocol: TCP
+      port: 8222
+      name: nats-monitoring
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -37,14 +40,14 @@ spec:
             - "8222"
           readinessProbe:
             httpGet:
-              path: /healthz?js-enabled=true
+              path: /healthz?js-enabled-only=true
               port: 8222
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
           livenessProbe:
             httpGet:
-              path: /healthz?js-enabled=true
+              path: /healthz?js-enabled-only=true
               port: 8222
             initialDelaySeconds: 3
             periodSeconds: 5
