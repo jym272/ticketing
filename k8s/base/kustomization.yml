@@ -1,12 +1,13 @@
 resources:
-  - postgres-db/auth-db.yaml
-  - postgres-db/tickets-db.yaml
-  - apis/auth-api.yaml
-  - apis/tickets-api.yaml
+  - postgres-db/auth.yaml
+  - postgres-db/tickets.yaml
+  - apis/auth.yaml
+  - apis/tickets.yaml
   - client/frontend.yaml
   - ingress.yaml
   - adminer.yaml
-  - nats-server.yaml
+  - nats/storage/persistent.yaml
+  - nats/server.yaml
 secretGenerator:
   - name: auth-secret
     envs:
