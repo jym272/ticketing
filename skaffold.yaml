@@ -32,6 +32,14 @@ build:
           dest: /app
         - src: 'src/**/*.tsx'
           dest: /app
+  - image: jym272/ticketing-orders-api
+    context: orders-api
+    docker:
+      dockerfile: dev.Dockerfile
+    sync:
+      manual:
+        - src: 'src/**/*.ts'
+          dest: /app
 manifests:
   kustomize:
     paths:

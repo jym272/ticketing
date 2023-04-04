@@ -1,8 +1,10 @@
 resources:
   - postgres-db/auth.yaml
   - postgres-db/tickets.yaml
+  - postgres-db/orders.yaml
   - apis/auth.yaml
   - apis/tickets.yaml
+  - apis/orders.yaml
   - client/frontend.yaml
   - ingress.yaml
   - adminer.yaml
