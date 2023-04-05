@@ -75,6 +75,8 @@ spec:
               value: nats.default.svc.cluster.local
             - name: NATS_SERVER_PORT
               value: "4222"
+            - name: NACK_DELAY_MS
+              value: "1000"
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
