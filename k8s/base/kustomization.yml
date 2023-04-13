@@ -1,15 +1,18 @@
 resources:
-  - postgres-db/auth.yaml
-  - postgres-db/tickets.yaml
-  - postgres-db/orders.yaml
+  - adminer.yaml
   - apis/auth.yaml
-  - apis/tickets.yaml
   - apis/orders.yaml
+  - apis/tickets.yaml
+  - apis/expiration.yaml
   - client/frontend.yaml
   - ingress.yaml
-  - adminer.yaml
-  - nats/storage/persistent.yaml
   - nats/server.yaml
+  - nats/storage/persistent.yaml
+  - postgres-db/auth.yaml
+  - postgres-db/orders.yaml
+  - postgres-db/tickets.yaml
+  - redis/for-expiration-api.yml
+  - redis/storage/persistent.yaml
 secretGenerator:
   - name: auth-secret
     envs:

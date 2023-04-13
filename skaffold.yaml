@@ -40,6 +40,13 @@ build:
       manual:
         - src: 'src/**/*.ts'
           dest: /app
+  - image: jym272/ticketing-expiration-api
+    context: expiration-api
+    docker:
+      dockerfile: dev.Dockerfile
+    sync:
+      infer:
+        - '**/*.go'
 manifests:
   kustomize:
     paths:
