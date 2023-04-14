@@ -5,3 +5,4 @@ cmd.sh
 *.test.csv
 *.test.json
 *.secret
+cookie

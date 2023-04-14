@@ -59,26 +59,28 @@ spec:
             failureThreshold: 30
             periodSeconds: 1
           env:
-            - name: PORT
-              value: "3051"
-            - name: POSTGRES_USER
-              value: jorge
-            - name: POSTGRES_DB
-              value: tickets
-            - name: POSTGRES_PASSWORD
-              value: "123456"
-            - name: POSTGRES_HOST
-              value: db-tickets.default.svc.cluster.local
-            - name: POSTGRES_PORT
-              value: "5432"
-            - name: NATS_SERVER_HOST
-              value: nats.default.svc.cluster.local
-            - name: NATS_SERVER_PORT
-              value: "4222"
-            - name: NACK_DELAY_MS
-              value: "1000"
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: auth-secret
                   key: JWT_SECRET
+            - name: NACK_DELAY_MS
+              value: "1000"
+            - name: NACK_MAX_RETRIES
+              value: "3"
+            - name: NATS_SERVER_HOST
+              value: nats.default.svc.cluster.local
+            - name: NATS_SERVER_PORT
+              value: "4222"
+            - name: PORT
+              value: "3051"
+            - name: POSTGRES_DB
+              value: tickets
+            - name: POSTGRES_HOST
+              value: db-tickets.default.svc.cluster.local
+            - name: POSTGRES_PASSWORD
+              value: "123456"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: jorge
