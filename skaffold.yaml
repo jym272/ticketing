@@ -40,6 +40,14 @@ build:
       manual:
         - src: 'src/**/*.ts'
           dest: /app
+  - image: jym272/ticketing-payments-api
+    context: payments-api
+    docker:
+      dockerfile: dev.Dockerfile
+    sync:
+      manual:
+        - src: 'src/**/*.ts'
+          dest: /app
   - image: jym272/ticketing-expiration-api
     context: expiration-api
     docker:

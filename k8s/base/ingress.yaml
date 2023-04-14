@@ -24,6 +24,20 @@ spec:
                 name: tickets-api
                 port:
                   number: 3051
+          - path: /api/orders/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: orders-api
+                port:
+                  number: 3052
+          - path: /api/payments/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: payments-api
+                port:
+                  number: 3054
           - path: /?(.*)
             pathType: Prefix
             backend:

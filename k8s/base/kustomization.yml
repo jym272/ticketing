@@ -1,19 +1,24 @@
 resources:
   - adminer.yaml
   - apis/auth.yaml
-  - apis/orders.yaml
-  - apis/tickets.yaml
   - apis/expiration.yaml
+  - apis/orders.yaml
+  - apis/payments.yaml
+  - apis/tickets.yaml
   - client/frontend.yaml
   - ingress.yaml
   - nats/server.yaml
   - nats/storage/persistent.yaml
   - postgres-db/auth.yaml
   - postgres-db/orders.yaml
+  - postgres-db/payments.yaml
   - postgres-db/tickets.yaml
   - redis/for-expiration-api.yml
   - redis/storage/persistent.yaml
 secretGenerator:
   - name: auth-secret
     envs:
-      - .env.secret
+      - .auth.secret
+  - name: stripe-secret
+    envs:
+      - .stripe.secret

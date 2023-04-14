@@ -10,7 +10,7 @@ declare id_new_ticket
 declare -A errors_updating_tks
 declare -A errors_creating_tks
 
-n=10000
+n=1000
 function update_tk() {
     local title=$1
     local price=$2
@@ -25,6 +25,7 @@ for i in $(seq 1 $n); do
   id_new_ticket=$(curl -s -b cookie -k https://ticketing.dev/api/tickets -X POST -H "Content-Type: application/json" -d '{"title": "apple", "price": "69.69"}' | jq -r '.ticket.id')
   if [ -z "$id_new_ticket" ]; then
       errors_creating_tks[$iteration]=_
+      continue
   fi
   errors_updating_tks[$id_new_ticket]=0
 
@@ -45,14 +46,16 @@ for i in $(seq 1 $n); do
 done
 
 function create_csv_files {
-    echo "id,errors" > update_errors.csv
+    local update_errors="update_errors.test.csv"
+    local create_errors="create_errors.test.csv"
+    echo "id,errors" > "$update_errors"
     for key in "${!errors_updating_tks[@]}"; do
-        echo "$key,${errors_updating_tks[$key]}" >> update_errors.csv
+        echo "$key,${errors_updating_tks[$key]}" >> "$update_errors"
     done
 
-    echo "iteration" > create_errors.csv
+    echo "iteration" > "$create_errors"
     for key in "${!errors_creating_tks[@]}"; do
-        echo "$key" >> create_errors.csv
+        echo "$key" >> "$create_errors"
     done
 }
 

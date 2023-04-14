@@ -2,4 +2,6 @@
 todo.txt
 .env.*
 cmd.sh
-*.csv
+*.test.csv
+*.test.json
+*.secret

@@ -15,7 +15,7 @@ kind: Deployment
 metadata:
   name: tickets-api
 spec:
-  replicas: 5
+  replicas: 1
   selector:
     matchLabels:
       api: tickets

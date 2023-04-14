@@ -1,28 +1,28 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: orders-api
+  name: payments-api
 spec:
   selector:
-    api: orders
+    api: payments
   ports:
     - protocol: TCP
-      port: 3052
-      name: orders
+      port: 3054
+      name: payments
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orders-api
+  name: payments-api
 spec:
   replicas: 1
   selector:
     matchLabels:
-      api: orders
+      api: payments
   template:
     metadata:
       labels:
-        api: orders
+        api: payments
     spec:
       initContainers:
         - name: wait-for-postgres
@@ -32,7 +32,7 @@ spec:
             [
               "sh",
               "-c",
-              "until nc -vz db-orders.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local 5432; do echo waiting for db orders; sleep 2; done",
+              "until nc -vz db-payments.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local 5432; do echo waiting for db payments; sleep 2; done",
             ]
         - name: wait-for-nats
           imagePullPolicy: IfNotPresent
@@ -44,18 +44,18 @@ spec:
               "until nc -vz nats.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local 4222; do echo waiting for nats; sleep 2; done",
             ]
       containers:
-        - name: orders-api
-          image: jym272/ticketing-orders-api
+        - name: payments-api
+          image: jym272/ticketing-payments-api
           livenessProbe: # connection to nats -> fundamental to microservice
             httpGet:
               path: /api/healthz  # /api/healthz
-              port: 3052
+              port: 3054
             periodSeconds: 5
             failureThreshold: 1
           startupProbe: #express service
             httpGet:
               path: /health
-              port: 3052
+              port: 3054
             failureThreshold: 30
             periodSeconds: 1
           env:
@@ -73,14 +73,24 @@ spec:
             - name: NATS_SERVER_PORT
               value: "4222"
             - name: PORT
-              value: "3052"
+              value: "3054"
             - name: POSTGRES_DB
-              value: orders
+              value: payments
             - name: POSTGRES_HOST
-              value: db-orders.default.svc.cluster.local
+              value: db-payments.default.svc.cluster.local
             - name: POSTGRES_PASSWORD
               value: "123456"
             - name: POSTGRES_PORT
               value: "5432"
             - name: POSTGRES_USER
               value: jorge
+            - name: STRIPE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_API_KEY
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_SECRET_KEY
