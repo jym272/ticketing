@@ -50,6 +50,11 @@ spec:
             failureThreshold: 30
             periodSeconds: 1
           env:
+            - name: FORCE_COLOR
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: FORCE_COLOR
             - name: PORT
               value: "3050"
             - name: POSTGRES_USER

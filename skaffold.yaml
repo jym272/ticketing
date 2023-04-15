@@ -45,9 +45,8 @@ build:
     docker:
       dockerfile: dev.Dockerfile
     sync:
-      manual:
-        - src: 'src/**/*.ts'
-          dest: /app
+      infer:
+        - '**/*.ts'
   - image: jym272/ticketing-expiration-api
     context: expiration-api
     docker:

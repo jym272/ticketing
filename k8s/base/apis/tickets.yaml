@@ -59,6 +59,11 @@ spec:
             failureThreshold: 30
             periodSeconds: 1
           env:
+            - name: FORCE_COLOR
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: FORCE_COLOR
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:

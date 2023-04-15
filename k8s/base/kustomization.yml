@@ -22,3 +22,7 @@ secretGenerator:
   - name: stripe-secret
     envs:
       - .stripe.secret
+configMapGenerator:
+  - name: app-config
+    envs:
+      - .env
