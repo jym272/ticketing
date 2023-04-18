@@ -45,5 +45,11 @@ spec:
             # kubectl get svc -n ingress-nginx
             - name: INGRESS_SVC
               value: ingress-nginx-controller
+            - name: STRIPE_API_KEY
+              valueFrom:
+                  secretKeyRef:
+                    name: stripe-secret
+                    key: STRIPE_API_KEY
+
 
 

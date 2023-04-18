@@ -27,11 +27,11 @@ build:
     docker:
       dockerfile: dev.Dockerfile
     sync:
-      manual:
-        - src: 'src/**/*.ts'
+      manual: # all files sync
+        - src: '**/*'
           dest: /app
-        - src: 'src/**/*.tsx'
-          dest: /app
+#        - src: 'src/**/*.tsx'
+#          dest: /app
   - image: jym272/ticketing-orders-api
     context: orders-api
     docker:
@@ -45,7 +45,7 @@ build:
     docker:
       dockerfile: dev.Dockerfile
     sync:
-      infer:
+      infer: # infer sync rules from the Dockerfile ADD/COPY commands
         - '**/*.ts'
   - image: jym272/ticketing-expiration-api
     context: expiration-api

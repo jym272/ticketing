@@ -89,11 +89,6 @@ spec:
               value: "5432"
             - name: POSTGRES_USER
               value: jorge
-            - name: STRIPE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: stripe-secret
-                  key: STRIPE_API_KEY
             - name: STRIPE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
