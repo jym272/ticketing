@@ -1,4 +1,30 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-payments-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-sc
+  hostPath:
+    path: /data/postgres-payments
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-payments-pvc
+spec:
+  storageClassName: postgres-sc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: db-payments
@@ -35,6 +61,8 @@ spec:
               value: payments
             - name: POSTGRES_PASSWORD
               value: "123456"
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
           livenessProbe:
             exec:
               command: ["psql", "-U", "jorge", "-d", "payments", "-c", "SELECT 1"]
@@ -47,6 +75,13 @@ spec:
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
+          volumeMounts:
+            - mountPath: var/lib/postgresql/data
+              name: persistent-storage
+      volumes:
+        - name: persistent-storage
+          persistentVolumeClaim:
+            claimName: postgres-payments-pvc
 
 
 

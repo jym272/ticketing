@@ -12,6 +12,7 @@ resources:
   - postgres-db/auth.yaml
   - postgres-db/orders.yaml
   - postgres-db/payments.yaml
+  - postgres-db/storage/persistent.yaml
   - postgres-db/tickets.yaml
   - redis/for-expiration-api.yml
   - redis/storage/persistent.yaml
