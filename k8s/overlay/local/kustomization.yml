@@ -1,29 +1,16 @@
 resources:
   - ../../base/
+  - adminer.yaml
   - postgres-db/storage/persistent.yaml
   - postgres-db/auth.yaml
   - postgres-db/orders.yaml
   - postgres-db/payments.yaml
   - postgres-db/tickets.yaml
-#images:
-#  - name: comments-api-image
-#    newName: jym272/microservice-comments-api
-#    newTag: latest
-#  - name: event-bus-image
-#    newName: jym272/microservice-event-bus
-#    newTag: latest
-#  - name: frontend-image
-#    newName: jym272/microservice-frontend
-#    newTag: latest
-#  - name: moderation-api-image
-#    newName: jym272/microservice-moderation-api
-#    newTag: latest
-#  - name: posts-api-image
-#    newName: jym272/microservice-posts-api
-#    newTag: latest
-#  - name: query-api-image
-#    newName: jym272/microservice-query-api
-#    newTag: latest
-
-
-
+secretGenerator:
+  - name: postgres-secret
+    envs:
+      - .postgres.secret
+configMapGenerator:
+  - name: postgres-host
+    envs:
+      - .env

@@ -1,5 +1,4 @@
 resources:
-  - adminer.yaml
   - apis/auth.yaml
   - apis/expiration.yaml
   - apis/orders.yaml

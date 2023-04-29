@@ -84,9 +84,15 @@ spec:
             - name: POSTGRES_DB
               value: orders
             - name: POSTGRES_HOST
-              value: db-orders.default.svc.cluster.local
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-host
+                  key: POSTGRES_HOST_ORDERS
             - name: POSTGRES_PASSWORD
-              value: "123456"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
             - name: POSTGRES_PORT
               value: "5432"
             - name: POSTGRES_USER

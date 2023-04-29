@@ -1,14 +1,30 @@
-#  - postgres-db/auth.yaml
 resources:
 - ../../base/
-- postgres-db/storage/persistent.yaml
-- postgres-db/orders.yaml
-- postgres-db/payments.yaml
-- postgres-db/tickets.yaml
+
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 patches:
-- path: patches/apis/auth-patch.yaml
+- path: patches/apis-init-container-cmd.yaml
   target:
     kind: Deployment
     name: auth-api
+- path: patches/apis-init-container-cmd.yaml
+  target:
+      kind: Deployment
+      name: orders-api
+- path: patches/apis-init-container-cmd.yaml
+  target:
+    kind: Deployment
+    name: payments-api
+- path: patches/apis-init-container-cmd.yaml
+  target:
+    kind: Deployment
+    name: tickets-api
+secretGenerator:
+  - name: postgres-secret
+    envs:
+      - .postgres.secret
+configMapGenerator:
+  - name: postgres-host
+    envs:
+      - .env
