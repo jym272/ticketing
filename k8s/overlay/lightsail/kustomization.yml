@@ -1,0 +1,14 @@
+#  - postgres-db/auth.yaml
+resources:
+- ../../base/
+- postgres-db/storage/persistent.yaml
+- postgres-db/orders.yaml
+- postgres-db/payments.yaml
+- postgres-db/tickets.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+patches:
+- path: patches/apis/auth-patch.yaml
+  target:
+    kind: Deployment
+    name: auth-api

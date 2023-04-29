@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-api
+spec:
+  selector:
+    api: payments
+  ports:
+    - protocol: TCP
+      port: 3054
+      name: payments
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      api: payments
+  template:
+    metadata:
+      labels:
+        api: payments
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          imagePullPolicy: IfNotPresent
+          image: busybox:1.36.0
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -vz db-payments.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local 5432; do echo waiting for db payments; sleep 2; done",
+            ]
+        - name: wait-for-nats
+          imagePullPolicy: IfNotPresent
+          image: busybox:1.36.0
+          command:
+            [
+              "sh",
+              "-c",
+              "until nc -vz nats.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local 4222; do echo waiting for nats; sleep 2; done",
+            ]
+      containers:
+        - name: payments-api
+          image: jym272/ticketing-payments-api
+          livenessProbe: # connection to nats -> fundamental to microservice
+            httpGet:
+              path: /api/healthz  # /api/healthz
+              port: 3054
+            periodSeconds: 5
+            failureThreshold: 1
+          startupProbe: #express service
+            httpGet:
+              path: /health
+              port: 3054
+            failureThreshold: 30
+            periodSeconds: 1
+          env:
+            - name: FORCE_COLOR
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: FORCE_COLOR
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-secret
+                  key: JWT_SECRET
+            - name: NACK_DELAY_MS
+              value: "1000"
+            - name: NACK_MAX_RETRIES
+              value: "3"
+            - name: NATS_SERVER_HOST
+              value: nats.default.svc.cluster.local
+            - name: NATS_SERVER_PORT
+              value: "4222"
+            - name: PORT
+              value: "3054"
+            - name: POSTGRES_DB
+              value: payments
+            - name: POSTGRES_HOST
+              value: db-payments.default.svc.cluster.local
+            - name: POSTGRES_PASSWORD
+              value: "123456"
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_USER
+              value: jorge
+            - name: STRIPE_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_SECRET_KEY

@@ -1,5 +1,10 @@
 resources:
   - ../../base/
+  - postgres-db/storage/persistent.yaml
+  - postgres-db/auth.yaml
+  - postgres-db/orders.yaml
+  - postgres-db/payments.yaml
+  - postgres-db/tickets.yaml
 #images:
 #  - name: comments-api-image
 #    newName: jym272/microservice-comments-api
