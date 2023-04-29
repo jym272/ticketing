@@ -7,9 +7,7 @@ resources:
   - client/frontend.yaml
   - ingress.yaml
   - nats/server.yaml
-  - nats/storage/persistent.yaml
   - redis/for-expiration-api.yml
-  - redis/storage/persistent.yaml
 secretGenerator:
   - name: auth-secret
     envs:

@@ -1,10 +1,8 @@
 resources:
   - ../../base/
-  - adminer.yaml
-  - postgres-db/auth.yaml
-  - postgres-db/orders.yaml
-  - postgres-db/payments.yaml
-  - postgres-db/tickets.yaml
+  - ../../base/postgres-db/
+  - ../../base/adminer/
+  - storage/
 secretGenerator:
   - name: postgres-secret
     envs:

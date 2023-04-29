@@ -1,0 +1,4 @@
+resources:
+  - postgres
+  - nats.yaml
+  - redis.yaml
