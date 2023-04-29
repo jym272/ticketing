@@ -6,22 +6,24 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-sc
-  hostPath:
+  storageClassName: standard
+  nfs:
+    # minikube ssh -p multinodes //$ip r | grep default
+    server: 192.168.122.1
     path: /data/postgres-tickets
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-tickets-pvc
+  namespace: default
 spec:
-  storageClassName: postgres-sc
+  storageClassName: standard
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
       storage: 1Gi

@@ -8,13 +8,6 @@ volumeBindingMode: WaitForFirstConsumer
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: postgres-sc
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
   name: redis-sc
 provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
@@ -249,13 +242,14 @@ metadata:
   name: postgres-auth-pv
 spec:
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   capacity:
     storage: 1Gi
-  hostPath:
+  nfs:
     path: /data/postgres-auth
+    server: 192.168.122.1
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-sc
+  storageClassName: standard
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -263,13 +257,14 @@ metadata:
   name: postgres-orders-pv
 spec:
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   capacity:
     storage: 1Gi
-  hostPath:
+  nfs:
     path: /data/postgres-orders
+    server: 192.168.122.1
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-sc
+  storageClassName: standard
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -277,13 +272,14 @@ metadata:
   name: postgres-payments-pv
 spec:
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   capacity:
     storage: 1Gi
-  hostPath:
+  nfs:
     path: /data/postgres-payments
+    server: 192.168.122.1
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-sc
+  storageClassName: standard
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -291,13 +287,14 @@ metadata:
   name: postgres-tickets-pv
 spec:
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   capacity:
     storage: 1Gi
-  hostPath:
+  nfs:
     path: /data/postgres-tickets
+    server: 192.168.122.1
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-sc
+  storageClassName: standard
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -316,6 +313,58 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  name: postgres-auth-pvc
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-orders-pvc
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-payments-pvc
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-tickets-pvc
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: standard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
   name: jetstream-pvc
 spec:
   accessModes:
@@ -324,54 +373,6 @@ spec:
     requests:
       storage: 1Gi
   storageClassName: jetstream-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-auth-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: postgres-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-orders-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: postgres-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-payments-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: postgres-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-tickets-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: postgres-sc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

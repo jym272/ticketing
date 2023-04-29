@@ -1,0 +1,15 @@
+resources:
+  - ../../base/
+  - adminer.yaml
+  - postgres-db/auth.yaml
+  - postgres-db/orders.yaml
+  - postgres-db/payments.yaml
+  - postgres-db/tickets.yaml
+secretGenerator:
+  - name: postgres-secret
+    envs:
+      - .postgres.secret
+configMapGenerator:
+  - name: postgres-host
+    envs:
+      - .env
