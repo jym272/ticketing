@@ -10,10 +10,12 @@ minikube start --vm-driver kvm2 #the default profile is minikube
 ```
 Minkube multinodes 4
 ```bash
-minikube start --nodes 4 --driver kvm2 -p multinodes
-minikube start --nodes 2 --cpus 12 --memory 8192--disk-size 10g --namespace test -p s-node
-minikube start --nodes 6 --cpus 12 --memory 8192 -p multinodes --driver kvm2
-minikube start --nodes 6 -p multinodes --driver kvm2
+#minikube start --nodes 2 --cpus 12 --memory 8192 --disk-size 10g --namespace test -p s-node
+# for minikube -> single node max is 12
+minikube start --cpus=max --memory 8192 -p minikube --driver kvm2
+# for multinodes
+minikube start --nodes 4 --cpus 3 --memory 2048 -p multinodes --driver kvm2
+
 ```
 
 

@@ -1,41 +1,3 @@
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: jetstream-sc
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: postgres-auth-sc
-provisioner: kubernetes.io/no-provisioner
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: postgres-orders-sc
-provisioner: kubernetes.io/no-provisioner
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: postgres-payments-sc
-provisioner: kubernetes.io/no-provisioner
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: postgres-tickets-sc
-provisioner: kubernetes.io/no-provisioner
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: redis-sc
-provisioner: kubernetes.io/no-provisioner
-volumeBindingMode: WaitForFirstConsumer
----
 apiVersion: v1
 data:
   FORCE_COLOR: "3"
@@ -45,13 +7,13 @@ metadata:
 ---
 apiVersion: v1
 data:
-  POSTGRES_HOST_AUTH: db-auth.default.svc.cluster.local
-  POSTGRES_HOST_ORDERS: db-orders.default.svc.cluster.local
-  POSTGRES_HOST_PAYMENTS: db-payments.default.svc.cluster.local
-  POSTGRES_HOST_TICKETS: db-tickets.default.svc.cluster.local
+  POSTGRES_HOST_AUTH: ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
+  POSTGRES_HOST_ORDERS: ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
+  POSTGRES_HOST_PAYMENTS: ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
+  POSTGRES_HOST_TICKETS: ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
 kind: ConfigMap
 metadata:
-  name: postgres-host-mk497md22c
+  name: postgres-host-h96k2k2959
 ---
 apiVersion: v1
 data:
@@ -64,10 +26,10 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  POSTGRES_PASSWORD: MTIzNDU2
+  POSTGRES_PASSWORD: VSteU2k4bURbbStzcEFDfXpQcSFST3taR3VEOG1KNFk=
 kind: Secret
 metadata:
-  name: postgres-secret-k2g85bkt88
+  name: postgres-secret-f44m28t6gf
 type: Opaque
 ---
 apiVersion: v1
@@ -88,19 +50,6 @@ type: Opaque
 apiVersion: v1
 kind: Service
 metadata:
-  name: adminer
-spec:
-  ports:
-  - port: 8080
-    protocol: TCP
-    targetPort: 8080
-  selector:
-    app: adminer
-  type: LoadBalancer
----
-apiVersion: v1
-kind: Service
-metadata:
   name: auth-api
 spec:
   ports:
@@ -109,54 +58,6 @@ spec:
     protocol: TCP
   selector:
     api: auth
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: db-auth
-spec:
-  ports:
-  - name: postgres
-    port: 5432
-    protocol: TCP
-  selector:
-    db: auth
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: db-orders
-spec:
-  ports:
-  - name: postgres
-    port: 5432
-    protocol: TCP
-  selector:
-    db: orders
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: db-payments
-spec:
-  ports:
-  - name: postgres
-    port: 5432
-    protocol: TCP
-  selector:
-    db: payments
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: db-tickets
-spec:
-  ports:
-  - name: postgres
-    port: 5432
-    protocol: TCP
-  selector:
-    db: tickets
 ---
 apiVersion: v1
 kind: Service
@@ -246,183 +147,6 @@ spec:
   selector:
     api: tickets
 ---
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: jetstream-pv
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/jetstream
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: jetstream-sc
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgres-auth-pv
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/postgres-auth
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-auth-sc
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgres-orders-pv
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/postgres-orders
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-orders-sc
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgres-payments-pv
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/postgres-payments
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-payments-sc
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: postgres-tickets-pv
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/postgres-tickets
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: postgres-tickets-sc
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: redis-pv
-spec:
-  accessModes:
-  - ReadWriteOnce
-  capacity:
-    storage: 1Gi
-  hostPath:
-    path: /data/redis
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: redis-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jetstream-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: jetstream-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-auth-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: postgres-auth-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-orders-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: postgres-orders-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-payments-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: postgres-payments-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-tickets-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: postgres-tickets-sc
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: redis-pvc
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: redis-sc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: adminer
-spec:
-  selector:
-    matchLabels:
-      app: adminer
-  template:
-    metadata:
-      labels:
-        app: adminer
-    spec:
-      containers:
-      - env:
-        - name: ADMINER_DESIGN
-          value: dracula
-        image: adminer:4
-        imagePullPolicy: IfNotPresent
-        name: adminer
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -454,12 +178,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-secret-k2g85bkt88
+              name: postgres-secret-f44m28t6gf
         - name: POSTGRES_HOST
           valueFrom:
             configMapKeyRef:
               key: POSTGRES_HOST_AUTH
-              name: postgres-host-mk497md22c
+              name: postgres-host-h96k2k2959
         - name: POSTGRES_PORT
           value: "5432"
         - name: PASSWORD_PEPPER
@@ -490,255 +214,11 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -vz db-auth.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
-          5432; do echo waiting for db auth; sleep 2; done
+        - until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
+          5432; do echo waiting for db payments; sleep 2; done
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
         name: wait-for-postgres
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: db-auth
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      db: auth
-  template:
-    metadata:
-      labels:
-        db: auth
-    spec:
-      containers:
-      - env:
-        - name: POSTGRES_USER
-          value: jorge
-        - name: POSTGRES_DB
-          value: auth
-        - name: POSTGRES_PASSWORD
-          value: "123456"
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
-        image: postgres:15.1
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - psql
-            - -U
-            - jorge
-            - -d
-            - auth
-            - -c
-            - SELECT 1
-          failureThreshold: 2
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        name: db-auth
-        readinessProbe:
-          exec:
-            command:
-            - psql
-            - -U
-            - jorge
-            - -d
-            - auth
-            - -c
-            - SELECT 1
-          failureThreshold: 2
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        volumeMounts:
-        - mountPath: var/lib/postgresql/data
-          name: persistent-storage
-      volumes:
-      - name: persistent-storage
-        persistentVolumeClaim:
-          claimName: postgres-auth-pvc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: db-orders
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      db: orders
-  template:
-    metadata:
-      labels:
-        db: orders
-    spec:
-      containers:
-      - env:
-        - name: POSTGRES_USER
-          value: jorge
-        - name: POSTGRES_DB
-          value: orders
-        - name: POSTGRES_PASSWORD
-          value: "123456"
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
-        image: postgres:15.1
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - psql
-            - -U
-            - jorge
-            - -d
-            - orders
-            - -c
-            - SELECT 1
-          failureThreshold: 2
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        name: db-orders
-        readinessProbe:
-          exec:
-            command:
-            - psql
-            - -U
-            - jorge
-            - -d
-            - orders
-            - -c
-            - SELECT 1
-          failureThreshold: 2
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        volumeMounts:
-        - mountPath: var/lib/postgresql/data
-          name: persistent-storage
-      volumes:
-      - name: persistent-storage
-        persistentVolumeClaim:
-          claimName: postgres-orders-pvc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: db-payments
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      db: payments
-  template:
-    metadata:
-      labels:
-        db: payments
-    spec:
-      containers:
-      - env:
-        - name: POSTGRES_USER
-          value: jorge
-        - name: POSTGRES_DB
-          value: payments
-        - name: POSTGRES_PASSWORD
-          value: "123456"
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
-        image: postgres:15.1
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - psql
-            - -U
-            - jorge
-            - -d
-            - payments
-            - -c
-            - SELECT 1
-          failureThreshold: 2
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        name: db-payments
-        readinessProbe:
-          exec:
-            command:
-            - psql
-            - -U
-            - jorge
-            - -d
-            - payments
-            - -c
-            - SELECT 1
-          failureThreshold: 2
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        volumeMounts:
-        - mountPath: var/lib/postgresql/data
-          name: persistent-storage
-      volumes:
-      - name: persistent-storage
-        persistentVolumeClaim:
-          claimName: postgres-payments-pvc
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: db-tickets
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      db: tickets
-  template:
-    metadata:
-      labels:
-        db: tickets
-    spec:
-      containers:
-      - env:
-        - name: POSTGRES_USER
-          value: jorge
-        - name: POSTGRES_DB
-          value: tickets
-        - name: POSTGRES_PASSWORD
-          value: "123456"
-        - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
-        image: postgres:15.1
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          exec:
-            command:
-            - psql
-            - -U
-            - jorge
-            - -d
-            - tickets
-            - -c
-            - SELECT 1
-          failureThreshold: 2
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        name: db-tickets
-        readinessProbe:
-          exec:
-            command:
-            - psql
-            - -U
-            - jorge
-            - -d
-            - tickets
-            - -c
-            - SELECT 1
-          failureThreshold: 2
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        volumeMounts:
-        - mountPath: var/lib/postgresql/data
-          name: persistent-storage
-      volumes:
-      - name: persistent-storage
-        persistentVolumeClaim:
-          claimName: postgres-tickets-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -873,13 +353,6 @@ spec:
             port: 8222
           initialDelaySeconds: 3
           periodSeconds: 5
-        volumeMounts:
-        - mountPath: /data/jetstream
-          name: persistent-storage
-      volumes:
-      - name: persistent-storage
-        persistentVolumeClaim:
-          claimName: jetstream-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -925,12 +398,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: POSTGRES_HOST_ORDERS
-              name: postgres-host-mk497md22c
+              name: postgres-host-h96k2k2959
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-secret-k2g85bkt88
+              name: postgres-secret-f44m28t6gf
         - name: POSTGRES_PORT
           value: "5432"
         - name: POSTGRES_USER
@@ -953,8 +426,8 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -vz db-orders.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
-          5432; do echo waiting for db orders; sleep 2; done
+        - until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
+          5432; do echo waiting for db payments; sleep 2; done
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
         name: wait-for-postgres
@@ -1009,12 +482,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: POSTGRES_HOST_PAYMENTS
-              name: postgres-host-mk497md22c
+              name: postgres-host-h96k2k2959
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-secret-k2g85bkt88
+              name: postgres-secret-f44m28t6gf
         - name: POSTGRES_PORT
           value: "5432"
         - name: POSTGRES_USER
@@ -1042,7 +515,7 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -vz db-payments.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+        - until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
           5432; do echo waiting for db payments; sleep 2; done
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
@@ -1105,13 +578,6 @@ spec:
             - ping
           failureThreshold: 10
           periodSeconds: 1
-        volumeMounts:
-        - mountPath: /data
-          name: redis-data
-      volumes:
-      - name: redis-data
-        persistentVolumeClaim:
-          claimName: redis-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -1155,12 +621,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: POSTGRES_HOST_TICKETS
-              name: postgres-host-mk497md22c
+              name: postgres-host-h96k2k2959
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-secret-k2g85bkt88
+              name: postgres-secret-f44m28t6gf
         - name: POSTGRES_PORT
           value: "5432"
         - name: POSTGRES_USER
@@ -1183,8 +649,8 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -vz db-tickets.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
-          5432; do echo waiting for db tickets; sleep 2; done
+        - until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
+          5432; do echo waiting for db payments; sleep 2; done
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
         name: wait-for-postgres

@@ -20,6 +20,22 @@ patches:
   target:
     kind: Deployment
     name: tickets-api
+- patch: |-
+    - op: remove
+      path: /spec/template/spec/containers/0/volumeMounts
+    - op: remove
+      path: /spec/template/spec/volumes
+  target:
+    name: redis-deployment
+    kind: Deployment
+- patch: |-
+    - op: remove
+      path: /spec/template/spec/containers/0/volumeMounts
+    - op: remove
+      path: /spec/template/spec/volumes
+  target:
+    kind: Deployment
+    name: nats
 secretGenerator:
   - name: postgres-secret
     envs:
