@@ -1,3 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-tickets-sc
+provisioner: kubernetes.io/no-provisioner
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -6,23 +12,20 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: standard
-  nfs:
-    server: 192.168.122.1
+  storageClassName: postgres-tickets-sc
+  hostPath:
     path: /data/postgres-tickets
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-tickets-pvc
-  namespace: default
 spec:
-  storageClassName: standard
+  storageClassName: postgres-tickets-sc
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
-

@@ -18,11 +18,13 @@ spec:
   selector:
     matchLabels:
       app: redis
+      pv-pvc-binding: redis-pv
   replicas: 1
   template:
     metadata:
       labels:
         app: redis
+        pv-pvc-binding: redis-pv
     spec:
       containers:
         - name: redis

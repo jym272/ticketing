@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-payments
+spec:
+  selector:
+    db: payments
+  ports:
+    - protocol: TCP
+      port: 5432
+      name: postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      db: payments
+  template:
+    metadata:
+      labels:
+        db: payments
+    spec:
+      containers:
+        - name: db-payments
+          image: postgres:15.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: POSTGRES_USER
+              value: jorge
+            - name: POSTGRES_DB
+              value: payments
+            - name: POSTGRES_PASSWORD
+              value: "123456"
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          livenessProbe:
+            exec:
+              command: ["psql", "-U", "jorge", "-d", "payments", "-c", "SELECT 1"]
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 2
+          readinessProbe:
+            exec:
+              command: ["psql", "-U", "jorge", "-d", "payments", "-c", "SELECT 1"]
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 2
+          volumeMounts:
+            - mountPath: var/lib/postgresql/data
+              name: persistent-storage
+      volumes:
+        - name: persistent-storage
+          persistentVolumeClaim:
+            claimName: postgres-payments-pvc
+
+
+
+

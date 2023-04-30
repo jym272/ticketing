@@ -1,3 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-auth-sc
+provisioner: kubernetes.io/no-provisioner
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -6,22 +12,20 @@ spec:
   capacity:
     storage: 1Gi
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  storageClassName: standard
-  nfs:
-    server: 192.168.122.1
+  storageClassName: postgres-auth-sc
+  hostPath:
     path: /data/postgres-auth
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-auth-pvc
-  namespace: default
 spec:
-  storageClassName: standard
+  storageClassName: postgres-auth-sc
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi

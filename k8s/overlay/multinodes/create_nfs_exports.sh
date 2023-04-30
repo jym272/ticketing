@@ -17,7 +17,7 @@ do
     sudo mkdir -p "$dir"
     sudo chown -R nobody:nogroup "$dir"
     green_echo "Creating NFS export for $dir"
-    export_line="$dir *(rw,sync,no_subtree_check,no_root_squash)"
+    export_line="$dir *(rw,sync,no_subtree_check,no_root_squash,insecure)"
     # first find export_line in /etc/exports, if not found then append it
     if grep -Fxq "$export_line" /etc/exports; then
       echo "$export_line already exists in /etc/exports"
@@ -31,7 +31,7 @@ done
 # if flag is given sudo exportfs -a && sudo systemctl restart nfs-kernel-server
 if [ $exportfs_flag -eq 1 ]; then
   green_echo "Exporting NFS shares"
-  sudo exportfs -a
+  sudo exportfs -ra
   green_echo "Restarting NFS server"
   sudo systemctl restart nfs-kernel-server
 fi

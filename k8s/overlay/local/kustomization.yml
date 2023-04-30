@@ -1,8 +1,8 @@
 resources:
   - ../../base/
   - ../../base/postgres-db/
+  - ../../base/storage/
   - ../../base/adminer
-  - storage/
 secretGenerator:
   - name: postgres-secret
     envs:

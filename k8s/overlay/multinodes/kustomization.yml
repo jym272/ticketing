@@ -1,8 +1,8 @@
 resources:
   - ../../base/
   - ../../base/postgres-db/
-  - ../../base/adminer/
-  - storage/
+  - ../../base/storage
+  - ../../base/adminer
 secretGenerator:
   - name: postgres-secret
     envs:
@@ -11,3 +11,125 @@ configMapGenerator:
   - name: postgres-host
     envs:
       - .env
+# Patch PV volumes from hostPath to NFS
+patches:
+# nats
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: jetstream-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/jetstream
+    target:
+      name: jetstream-pv
+ # redis
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: redis-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/redis
+    target:
+      name: redis-pv
+# postgres-auth
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: postgres-auth-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/postgres-auth
+    target:
+      name: postgres-auth-pv
+  # postgres-orders
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: postgres-orders-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/postgres-orders
+    target:
+      name: postgres-orders-pv
+  # postgres-payments
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: postgres-payments-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/postgres-payments
+    target:
+      name: postgres-payments-pv
+  # postgres-tickets
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: postgres-tickets-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/postgres-tickets
+    target:
+      name: postgres-tickets-pv
