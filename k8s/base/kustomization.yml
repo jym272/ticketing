@@ -1,9 +1,5 @@
 resources:
-  - apis/auth.yaml
-  - apis/expiration.yaml
-  - apis/orders.yaml
-  - apis/payments.yaml
-  - apis/tickets.yaml
+  - apis
   - client/frontend.yaml
   - ingress.yaml
   - nats/server.yaml
