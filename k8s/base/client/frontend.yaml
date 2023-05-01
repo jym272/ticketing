@@ -25,24 +25,15 @@ spec:
       labels:
         api: frontend
     spec:
-#      initContainers:
-#        - name: init-postgres
-#          imagePullPolicy: IfNotPresent
-#          image: busybox:1.36.0
-#          command:
-#            [
-#              "sh",
-#              "-c",
-#              "until nc -vz query-api.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local $QUERY_API_SERVICE_PORT_QUERY_API; do echo waiting for db; sleep 2; done",
-#            ]
       containers:
         - name: frontend
           image: jym272/ticketing-frontend
+          # maintain the order of env vars for kustomization patches
           env:
             # kubectl get ns
-            - name: INGRESS_NS
+            - name: INGRESS_NS # the ns where resides the ingress i.e: default, ingress-nginx
               value: ingress-nginx
-            # kubectl get svc -n ingress-nginx
+            # kubectl get svc -n ingress-nginx # or de ns where the ingress resides
             - name: INGRESS_SVC
               value: ingress-nginx-controller
             - name: STRIPE_PUBLISHABLE_KEY

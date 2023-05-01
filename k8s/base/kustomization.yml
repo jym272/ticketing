@@ -1,7 +1,6 @@
 resources:
   - apis
   - client/frontend.yaml
-  - ingress.yaml
   - nats/server.yaml
   - redis/for-expiration-api.yml
 secretGenerator:
@@ -14,4 +13,4 @@ secretGenerator:
 configMapGenerator:
   - name: app-config
     envs:
-      - .env
+      - .app_config.env

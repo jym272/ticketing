@@ -1,8 +1,9 @@
 resources:
   - ../../base/
+  - ../../base/adminer
+  - ../../base/ingress
   - ../../base/postgres-db/
   - ../../base/storage
-  - ../../base/adminer
 secretGenerator:
   - name: postgres-secret
     envs:
@@ -10,7 +11,7 @@ secretGenerator:
 configMapGenerator:
   - name: postgres-host
     envs:
-      - .env
+      - .postgres_host.env
 # Patch PV volumes from hostPath to NFS
 patches:
 # nats
