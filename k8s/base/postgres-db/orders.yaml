@@ -33,11 +33,17 @@ spec:
           imagePullPolicy: IfNotPresent
           env:
             - name: POSTGRES_USER
-              value: jorge
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
             - name: POSTGRES_DB
               value: orders
             - name: POSTGRES_PASSWORD
-              value: "123456"
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           livenessProbe:

@@ -49,30 +49,6 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-orders-pvc
-spec:
-  storageClassName: postgres-orders-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-orders-pvc
-spec:
-  storageClassName: postgres-orders-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
   name: postgres-payments-pvc
 spec:
   storageClassName: postgres-payments-sc

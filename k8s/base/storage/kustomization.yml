@@ -2,3 +2,4 @@ resources:
   - postgres
   - nats.yaml
   - redis.yaml
+  - claims.yaml

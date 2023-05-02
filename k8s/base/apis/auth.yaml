@@ -58,7 +58,10 @@ spec:
             - name: PORT
               value: "3050"
             - name: POSTGRES_USER
-              value: jorge
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
             - name: POSTGRES_DB
               value: auth
             - name: POSTGRES_PASSWORD
