@@ -17,15 +17,3 @@ spec:
   storageClassName: postgres-tickets-sc
   hostPath:
     path: /data/postgres-tickets
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-tickets-pvc
-spec:
-  storageClassName: postgres-tickets-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi

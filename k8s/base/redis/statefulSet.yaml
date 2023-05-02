@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  # headless service: provide network identity and DNS-based service discovery for the individual pods within the StatefulSet
+  # it allows direct access to the individual pods by returning the IP addresses of the pods themselves.
+  clusterIP: None
+  selector:
+    app: redis
+  ports:
+    - name: redis-port
+      port: 6379
+      targetPort: 6379
+---
+# https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#persistentvolumeclaim-retention
+# The domain managed by this Service takes the form: $(service name).$(namespace).svc.cluster.local,
+# where "cluster.local" is the cluster domain. As each Pod is created, it gets a matching DNS
+# subdomain, taking the form: $(podname).$(governing service domain),
+# where the governing service is defined by the serviceName field on the StatefulSet.
+
+# nc -vz redis-0.redis 6379
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: "redis"
+  replicas: 1 # the same number of volumes is needed
+  minReadySeconds: 10
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:alpine
+          volumeMounts:
+            - name: redis-claim
+              mountPath: /data
+          # AOF activated, RDB activated, every 15 min if at least 1 key changed,
+          # every 5 min if at least 10 keys changed, every 1 min if at least 10000 keys changed
+          command: ["redis-server", "--appendonly", "yes", "--save", "900", "1", "--save", "300", "10", "--save", "60", "10000"]
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 0
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          startupProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            failureThreshold: 10
+            periodSeconds: 1
+      volumes:
+        - name: redis-claim
+          persistentVolumeClaim:
+            claimName: redis-pvc
+
+# Note that, the PersistentVolumes associated with the Pods' PersistentVolume Claims are not deleted
+# when the Pods, or StatefulSet are deleted. This must be done manually. -> delete the pvc manually
+# TODO create an script that delete all resources wait 5s and delete the pvc
+# dynamically provision PersistentVolumeClaims (PVCs) for each replica of the StatefulSet.
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: redis-claim
+#      spec:
+#        accessModes:
+#          - ReadWriteOnce
+#        resources:
+#          requests:
+#            storage: 1Gi
+#        storageClassName: redis-sc
+

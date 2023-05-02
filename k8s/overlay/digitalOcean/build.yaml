@@ -7,13 +7,13 @@ metadata:
 ---
 apiVersion: v1
 data:
-  POSTGRES_HOST_AUTH: ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
-  POSTGRES_HOST_ORDERS: ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
-  POSTGRES_HOST_PAYMENTS: ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
-  POSTGRES_HOST_TICKETS: ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
+  POSTGRES_HOST_AUTH: db-auth.default.svc.cluster.local
+  POSTGRES_HOST_ORDERS: db-orders.default.svc.cluster.local
+  POSTGRES_HOST_PAYMENTS: db-payments.default.svc.cluster.local
+  POSTGRES_HOST_TICKETS: db-tickets.default.svc.cluster.local
 kind: ConfigMap
 metadata:
-  name: postgres-host-h96k2k2959
+  name: postgres-host-mk497md22c
 ---
 apiVersion: v1
 data:
@@ -26,10 +26,10 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  POSTGRES_PASSWORD: VSteU2k4bURbbStzcEFDfXpQcSFST3taR3VEOG1KNFk=
+  POSTGRES_PASSWORD: MTIzNDU2
 kind: Secret
 metadata:
-  name: postgres-secret-f44m28t6gf
+  name: postgres-secret-k2g85bkt88
 type: Opaque
 ---
 apiVersion: v1
@@ -62,6 +62,58 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: db-auth
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+  selector:
+    db: auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-orders
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+  selector:
+    db: orders
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-payments
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+  selector:
+    db: payments
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-tickets
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+  selector:
+    db: tickets
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: expiration-api
 spec:
   ports:
@@ -89,6 +141,7 @@ kind: Service
 metadata:
   name: nats
 spec:
+  clusterIP: None
   ports:
   - name: nats-client
     port: 4222
@@ -128,6 +181,7 @@ kind: Service
 metadata:
   name: redis
 spec:
+  clusterIP: None
   ports:
   - name: redis-port
     port: 6379
@@ -178,12 +232,12 @@ spec:
           valueFrom:
             secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-secret-f44m28t6gf
+              name: postgres-secret-k2g85bkt88
         - name: POSTGRES_HOST
           valueFrom:
             configMapKeyRef:
               key: POSTGRES_HOST_AUTH
-              name: postgres-host-h96k2k2959
+              name: postgres-host-mk497md22c
         - name: POSTGRES_PORT
           value: "5432"
         - name: PASSWORD_PEPPER
@@ -214,8 +268,8 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
-          5432; do echo waiting for db payments; sleep 2; done
+        - until nc -vz db-auth.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          5432; do echo waiting for db auth; sleep 2; done
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
         name: wait-for-postgres
@@ -302,9 +356,9 @@ spec:
       containers:
       - env:
         - name: INGRESS_NS
-          value: ingress-nginx
+          value: default
         - name: INGRESS_SVC
-          value: ingress-nginx-controller
+          value: nginx-ingress-ingress-nginx-controller
         - name: STRIPE_PUBLISHABLE_KEY
           valueFrom:
             secretKeyRef:
@@ -312,47 +366,6 @@ spec:
               name: stripe-secret-t8b8t4d6kb
         image: jym272/ticketing-frontend
         name: frontend
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  labels:
-    app: nats
-  name: nats
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nats
-  template:
-    metadata:
-      labels:
-        app: nats
-    spec:
-      containers:
-      - command:
-        - nats-server
-        - -js
-        - --store_dir=/data
-        - -DV
-        - -m
-        - "8222"
-        image: nats:2.9.15-alpine
-        livenessProbe:
-          failureThreshold: 2
-          httpGet:
-            path: /healthz?js-enabled-only=true
-            port: 8222
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        name: nats
-        readinessProbe:
-          failureThreshold: 2
-          httpGet:
-            path: /healthz?js-enabled-only=true
-            port: 8222
-          initialDelaySeconds: 3
-          periodSeconds: 5
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -398,12 +411,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: POSTGRES_HOST_ORDERS
-              name: postgres-host-h96k2k2959
+              name: postgres-host-mk497md22c
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-secret-f44m28t6gf
+              name: postgres-secret-k2g85bkt88
         - name: POSTGRES_PORT
           value: "5432"
         - name: POSTGRES_USER
@@ -426,8 +439,8 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
-          5432; do echo waiting for db payments; sleep 2; done
+        - until nc -vz db-orders.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          5432; do echo waiting for db orders; sleep 2; done
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
         name: wait-for-postgres
@@ -482,12 +495,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: POSTGRES_HOST_PAYMENTS
-              name: postgres-host-h96k2k2959
+              name: postgres-host-mk497md22c
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-secret-f44m28t6gf
+              name: postgres-secret-k2g85bkt88
         - name: POSTGRES_PORT
           value: "5432"
         - name: POSTGRES_USER
@@ -515,7 +528,7 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
+        - until nc -vz db-payments.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
           5432; do echo waiting for db payments; sleep 2; done
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
@@ -528,56 +541,6 @@ spec:
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
         name: wait-for-nats
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: redis-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: redis
-      pv-pvc-binding: redis-pv
-  template:
-    metadata:
-      labels:
-        app: redis
-        pv-pvc-binding: redis-pv
-    spec:
-      containers:
-      - command:
-        - redis-server
-        - --appendonly
-        - "yes"
-        - --save
-        - "900"
-        - "1"
-        - --save
-        - "300"
-        - "10"
-        - --save
-        - "60"
-        - "10000"
-        image: redis:alpine
-        name: redis
-        readinessProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          failureThreshold: 3
-          initialDelaySeconds: 0
-          periodSeconds: 10
-          successThreshold: 1
-          timeoutSeconds: 5
-        startupProbe:
-          exec:
-            command:
-            - redis-cli
-            - ping
-          failureThreshold: 10
-          periodSeconds: 1
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -621,12 +584,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key: POSTGRES_HOST_TICKETS
-              name: postgres-host-h96k2k2959
+              name: postgres-host-mk497md22c
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-secret-f44m28t6gf
+              name: postgres-secret-k2g85bkt88
         - name: POSTGRES_PORT
           value: "5432"
         - name: POSTGRES_USER
@@ -649,8 +612,8 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com
-          5432; do echo waiting for db payments; sleep 2; done
+        - until nc -vz db-tickets.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          5432; do echo waiting for db tickets; sleep 2; done
         image: busybox:1.36.0
         imagePullPolicy: IfNotPresent
         name: wait-for-postgres
@@ -663,16 +626,412 @@ spec:
         imagePullPolicy: IfNotPresent
         name: wait-for-nats
 ---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-auth
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      db: auth
+  serviceName: db-auth
+  template:
+    metadata:
+      labels:
+        db: auth
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          value: jorge
+        - name: POSTGRES_DB
+          value: auth
+        - name: POSTGRES_PASSWORD
+          value: "123456"
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - auth
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: db-auth
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - auth
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: var/lib/postgresql/data
+          name: auth-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: auth-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: do-block-storage
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-orders
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      db: orders
+  serviceName: db-orders
+  template:
+    metadata:
+      labels:
+        db: orders
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          value: jorge
+        - name: POSTGRES_DB
+          value: orders
+        - name: POSTGRES_PASSWORD
+          value: "123456"
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - orders
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: db-orders
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - orders
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: var/lib/postgresql/data
+          name: orders-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: orders-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: do-block-storage
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-payments
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      db: payments
+  serviceName: db-payments
+  template:
+    metadata:
+      labels:
+        db: payments
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          value: jorge
+        - name: POSTGRES_DB
+          value: payments
+        - name: POSTGRES_PASSWORD
+          value: "123456"
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - payments
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: db-payments
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - payments
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: var/lib/postgresql/data
+          name: payments-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: payments-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: do-block-storage
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-tickets
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      db: tickets
+  serviceName: db-tickets
+  template:
+    metadata:
+      labels:
+        db: tickets
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          value: jorge
+        - name: POSTGRES_DB
+          value: tickets
+        - name: POSTGRES_PASSWORD
+          value: "123456"
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - tickets
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: db-tickets
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - tickets
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: var/lib/postgresql/data
+          name: tickets-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: tickets-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: do-block-storage
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: nats
+  name: nats
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nats
+  serviceName: nats
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+      - command:
+        - nats-server
+        - -js
+        - --store_dir=/data
+        - -DV
+        - -m
+        - "8222"
+        image: nats:2.9.15-alpine
+        livenessProbe:
+          failureThreshold: 2
+          httpGet:
+            path: /healthz?js-enabled-only=true
+            port: 8222
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: nats
+        readinessProbe:
+          failureThreshold: 2
+          httpGet:
+            path: /healthz?js-enabled-only=true
+            port: 8222
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: /data/jetstream
+          name: nats-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: nats-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: do-block-storage
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - command:
+        - redis-server
+        - --appendonly
+        - "yes"
+        - --save
+        - "900"
+        - "1"
+        - --save
+        - "300"
+        - "10"
+        - --save
+        - "60"
+        - "10000"
+        image: redis:alpine
+        name: redis
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 3
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        startupProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 10
+          periodSeconds: 1
+        volumeMounts:
+        - mountPath: /data
+          name: redis-claim
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-claim
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+      storageClassName: do-block-storage
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
   name: ingress-srv
 spec:
   rules:
-  - host: ticketing.dev
+  - host: www.jym272.online
     http:
       paths:
       - backend:
@@ -710,3 +1069,18 @@ spec:
               number: 3000
         path: /?(.*)
         pathType: Prefix
+  - host: test.jym272.online
+    http:
+      paths:
+      - backend:
+          service:
+            name: hello-kubernetes-second
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - www.jym272.online
+    - test.jym272.online
+    secretName: hello-kubernetes-tls

@@ -1,44 +1,141 @@
 resources:
 - ../../base/
-- ingress.yaml
+- ../../base/postgres-db
+#- ingress.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 patches:
-# init container lookup for postgres server host
-- path: patches/apis-init-container-cmd.yaml
-  target:
-    kind: Deployment
-    name: auth-api
-- path: patches/apis-init-container-cmd.yaml
-  target:
-      kind: Deployment
-      name: orders-api
-- path: patches/apis-init-container-cmd.yaml
-  target:
-    kind: Deployment
-    name: payments-api
-- path: patches/apis-init-container-cmd.yaml
-  target:
-    kind: Deployment
-    name: tickets-api
-# take out the volumeMounts and volumes from redis and nats
 - patch: |-
     - op: remove
-      path: /spec/template/spec/containers/0/volumeMounts
-    - op: remove
       path: /spec/template/spec/volumes
+    - op: add
+      path: /spec/volumeClaimTemplates
+      value:
+        - metadata:
+            name: auth-claim
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: do-block-storage
   target:
-    name: redis-deployment
-    kind: Deployment
+    name: db-auth
+    kind: StatefulSet
 - patch: |-
     - op: remove
-      path: /spec/template/spec/containers/0/volumeMounts
+      path: /spec/template/spec/volumes
+    - op: add
+      path: /spec/volumeClaimTemplates
+      value:
+        - metadata:
+            name: orders-claim
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: do-block-storage
+  target:
+    name: db-orders
+    kind: StatefulSet
+- patch: |-
     - op: remove
       path: /spec/template/spec/volumes
+    - op: add
+      path: /spec/volumeClaimTemplates
+      value:
+        - metadata:
+            name: payments-claim
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: do-block-storage
   target:
-    kind: Deployment
+    name: db-payments
+    kind: StatefulSet
+- patch: |-
+    - op: remove
+      path: /spec/template/spec/volumes
+    - op: add
+      path: /spec/volumeClaimTemplates
+      value:
+        - metadata:
+            name: tickets-claim
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: do-block-storage
+  target:
+    name: db-tickets
+    kind: StatefulSet
+  # take out the volumeMounts from redis and nats, add block storage
+- patch: |-
+    - op: remove
+      path: /spec/template/spec/volumes
+    - op: add
+      path: /spec/volumeClaimTemplates
+      value:
+        - metadata:
+            name: redis-claim
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: do-block-storage
+  target:
+    name: redis
+    kind: StatefulSet
+- patch: |-
+    - op: remove
+      path: /spec/template/spec/volumes
+    - op: add
+      path: /spec/volumeClaimTemplates
+      value:
+        - metadata:
+            name: nats-claim
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 1Gi
+            storageClassName: do-block-storage
+  target:
     name: nats
+    kind: StatefulSet
+#######
+
+#######
+# init container lookup for postgres server host
+#- path: patches/apis-init-container-cmd.yaml
+#  target:
+#    kind: Deployment
+#    name: auth-api
+#- path: patches/apis-init-container-cmd.yaml
+#  target:
+#      kind: Deployment
+#      name: orders-api
+#- path: patches/apis-init-container-cmd.yaml
+#  target:
+#    kind: Deployment
+#    name: payments-api
+#- path: patches/apis-init-container-cmd.yaml
+#  target:
+#    kind: Deployment
+#    name: tickets-api
+
 # set INGRESS_NS and INGRESS_SVC env vars for frontend
 - patch: |-
     - op: replace

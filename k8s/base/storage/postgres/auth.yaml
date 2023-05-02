@@ -17,15 +17,3 @@ spec:
   storageClassName: postgres-auth-sc
   hostPath:
     path: /data/postgres-auth
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-auth-pvc
-spec:
-  storageClassName: postgres-auth-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi

@@ -17,15 +17,3 @@ spec:
   storageClassName: postgres-payments-sc
   hostPath:
     path: /data/postgres-payments
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-payments-pvc
-spec:
-  storageClassName: postgres-payments-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi

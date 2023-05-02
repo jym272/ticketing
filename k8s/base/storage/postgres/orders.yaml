@@ -17,16 +17,4 @@ spec:
   storageClassName: postgres-orders-sc
   hostPath:
     path: /data/postgres-orders
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: postgres-orders-pvc
-spec:
-  storageClassName: postgres-orders-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
 

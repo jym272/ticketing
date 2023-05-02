@@ -4,6 +4,7 @@ resources:
   - ../../base/ingress
   - ../../base/postgres-db/
   - ../../base/storage/
+  - ../../base/storage/pvc
 secretGenerator:
   - name: postgres-secret
     envs:

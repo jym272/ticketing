@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: db-auth
 spec:
+  clusterIP: None
   selector:
     db: auth
   ports:
@@ -11,14 +12,16 @@ spec:
       name: postgres
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: db-auth
 spec:
-  replicas: 1
   selector:
     matchLabels:
       db: auth
+  serviceName: "db-auth"
+  replicas: 1 # the same number of volumes is needed
+  minReadySeconds: 10
   template:
     metadata:
       labels:
@@ -51,11 +54,21 @@ spec:
             failureThreshold: 2
           volumeMounts:
             - mountPath: var/lib/postgresql/data
-              name: persistent-storage
+              name: auth-claim
       volumes:
-        - name: persistent-storage
+        - name: auth-claim
           persistentVolumeClaim:
             claimName: postgres-auth-pvc
+#  volumeClaimTemplates:
+#    - metadata:
+#        name: auth-claim
+#      spec:
+#        accessModes:
+#          - ReadWriteOnce
+#        resources:
+#          requests:
+#            storage: 1Gi
+#        storageClassName: postgres-auth-sc
 
 
 

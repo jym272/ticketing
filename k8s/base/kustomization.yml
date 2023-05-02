@@ -1,8 +1,8 @@
 resources:
   - apis
   - client/frontend.yaml
-  - nats/server.yaml
-  - redis/for-expiration-api.yml
+  - nats/statefulSet.yaml
+  - redis/statefulSet.yaml
 secretGenerator:
   - name: auth-secret
     envs:

@@ -5,13 +5,15 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
+    # uncomment the nex line only if the certificate is ready -> kubectl get certificate
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
     - hosts:
         - www.jym272.online
         - test.jym272.online
-      secretName: hello-kubernetes-tls
+      #  The secretName must be different for every Ingress you create.
+      secretName: jym272-online-tls
   rules:
     - host: "www.jym272.online"
       http:

@@ -18,15 +18,3 @@ spec:
   storageClassName: jetstream-sc
   hostPath:
     path: /data/jetstream
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jetstream-pvc
-spec:
-  storageClassName: jetstream-sc
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi

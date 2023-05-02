@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: db-orders
 spec:
+  clusterIP: None
   selector:
     db: orders
   ports:
@@ -11,14 +12,16 @@ spec:
       name: postgres
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: db-orders
 spec:
-  replicas: 1
   selector:
     matchLabels:
       db: orders
+  serviceName: "db-orders"
+  replicas: 1 # the same number of volumes is needed
+  minReadySeconds: 10
   template:
     metadata:
       labels:
@@ -51,9 +54,9 @@ spec:
             failureThreshold: 2
           volumeMounts:
             - mountPath: var/lib/postgresql/data
-              name: persistent-storage
+              name: orders-claim
       volumes:
-        - name: persistent-storage
+        - name: orders-claim
           persistentVolumeClaim:
             claimName: postgres-orders-pvc
 

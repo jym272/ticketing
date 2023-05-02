@@ -3,6 +3,7 @@ kind: Service
 metadata:
   name: db-payments
 spec:
+  clusterIP: None
   selector:
     db: payments
   ports:
@@ -11,14 +12,16 @@ spec:
       name: postgres
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: db-payments
 spec:
-  replicas: 1
   selector:
     matchLabels:
       db: payments
+  serviceName: "db-payments"
+  replicas: 1 # the same number of volumes is needed
+  minReadySeconds: 10
   template:
     metadata:
       labels:
@@ -51,9 +54,9 @@ spec:
             failureThreshold: 2
           volumeMounts:
             - mountPath: var/lib/postgresql/data
-              name: persistent-storage
+              name: payments-claim
       volumes:
-        - name: persistent-storage
+        - name: payments-claim
           persistentVolumeClaim:
             claimName: postgres-payments-pvc
 
