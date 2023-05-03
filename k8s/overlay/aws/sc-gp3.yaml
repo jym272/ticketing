@@ -1,0 +1,11 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: gp3
+allowVolumeExpansion: true
+reclaimPolicy: Retain
+provisioner: ebs.csi.aws.com
+# This attribute makes sure that the PersistentVolume (PV) and Pod will be provisioned in the same AWS availability zone (AZ).
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  type: gp3
