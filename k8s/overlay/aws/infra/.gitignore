@@ -1,0 +1,5 @@
+# terrafomr dirs
+.terraform
+*.tfstate
+*.tfstate.*
+.terraform.*

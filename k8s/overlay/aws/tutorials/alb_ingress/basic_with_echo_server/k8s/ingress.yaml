@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  # https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.2/guide/ingress/annotations/
+  # alb.ingress.kubernetes.io/target-type specifies how to route traffic to pods. Options: instance(default) and ip.
+  # - instance mode will route traffic to all ec2 instances within cluster on NodePort opened for your service.
+  # - service must be of type "NodePort" or "LoadBalancer" to use instance mode
+  annotations:
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:sa-east-1:712136406596:certificate/48e0d336-1cb2-4d4a-a4d4-7a9bf30a7859
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
+  labels:
+    app: echo-pod
+    app.kubernetes.io/name: echo-pod
+  name: echo-pod-ingress
+spec:
+  ingressClassName: alb # or whatever ingress class name of ELB -> kubectl get ingressclasses.networking.k8s.io
+  tls:
+    - hosts:
+        - dev.jym272.foundation # change it to your host name here
+  rules:
+    - host: dev.jym272.foundation # change it to your host name here
+      http:
+        paths:
+          - path: /*
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: ssl-redirect
+                port:
+                  name: use-annotation
+          - path: /echo/* # it must be /echo/*, not /echo -> otherwise use pathType: Prefix
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: echo-pod
+                port:
+                  name: http

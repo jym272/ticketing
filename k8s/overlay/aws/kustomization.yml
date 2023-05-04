@@ -2,7 +2,7 @@ resources:
 - ../../base/
 - ../../base/postgres-db
 - sc-gp3.yaml
-#- ingress.yaml
+#- ingress2.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -116,35 +116,14 @@ patches:
   target:
     name: nats
     kind: StatefulSet
-#######
-
-#######
-# init container lookup for postgres server host
-#- path: patches/apis-init-container-cmd.yaml
-#  target:
-#    kind: Deployment
-#    name: auth-api
-#- path: patches/apis-init-container-cmd.yaml
-#  target:
-#      kind: Deployment
-#      name: orders-api
-#- path: patches/apis-init-container-cmd.yaml
-#  target:
-#    kind: Deployment
-#    name: payments-api
-#- path: patches/apis-init-container-cmd.yaml
-#  target:
-#    kind: Deployment
-#    name: tickets-api
-
 # set INGRESS_NS and INGRESS_SVC env vars for frontend
 - patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/env/0/value
-      value: kube-system
+      value: default
     - op: replace
       path: /spec/template/spec/containers/0/env/1/value
-      value: aws-load-balancer-webhook-service
+      value: nginx-ingress-ingress-nginx-controller
   target:
     kind: Deployment
     name: frontend

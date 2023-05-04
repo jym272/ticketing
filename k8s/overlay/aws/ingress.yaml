@@ -3,63 +3,65 @@ kind: Ingress
 metadata:
   name: ingress-srv
   annotations:
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:sa-east-1:712136406596:certificate/48e0d336-1cb2-4d4a-a4d4-7a9bf30a7859
-    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/scheme: internet-facing
-    alb.ingress.kubernetes.io/actions.ssl-redirect: '{"Type": "redirect", "RedirectConfig": { "Protocol": "HTTPS", "Port": "443", "StatusCode": "HTTP_301"}}'
-    alb.ingress.kubernetes.io/target-type: ip
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    # uncomment the nex line only if the issuer ready
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
-  ingressClassName: alb # or whatever ingress class name of ELB
   tls:
     - hosts:
-        - dev.jym272.foundation # change it to your host name here
+        - dev.jym272.foundation
+        - test.jym272.foundation
+      #  The secretName must be different for every Ingress you create.
+      secretName: jym272-foundation-tls
   rules:
-    - host: dev.jym272.foundation
+    - host: "dev.jym272.foundation"
       http:
         paths:
-          - path: /*
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: ssl-redirect
-                port:
-                  name: use-annotation
-          - path: /api/users/
+          - path: /api/users/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: auth-api
                 port:
-                  name: auth
-          - path: /api/tickets/
+                  number: 3050
+          - path: /api/tickets/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: tickets-api
                 port:
-                  name: tickets
-          - path: /api/orders/
+                  number: 3051
+          - path: /api/orders/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: orders-api
                 port:
-                  name: orders
-          - path: /api/payments/
+                  number: 3052
+          - path: /api/payments/?(.*)
             pathType: Prefix
             backend:
               service:
                 name: payments-api
                 port:
-                  name: payments
-          - path: /
+                  number: 3054
+          - path: /?(.*)
             pathType: Prefix
             backend:
               service:
                 name: frontend
                 port:
-                  name: frontend
-
-
+                  number: 3000
+    - host: "test.jym272.foundation"
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/"
+            backend:
+              service:
+                name: hello-kubernetes-second
+                port:
+                  number: 80
 
 
