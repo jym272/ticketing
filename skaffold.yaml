@@ -59,8 +59,9 @@ manifests:
     paths:
     - k8s/base
 profiles:
+# doesn't work with multinodes https://github.com/GoogleContainerTools/skaffold/issues/5494
 - name: local
   manifests:
     kustomize:
       paths:
-      - k8s/overlay/local
+      - k8s/overlay/minikube

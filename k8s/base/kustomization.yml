@@ -14,3 +14,18 @@ configMapGenerator:
   - name: app-config
     envs:
       - .app_config.env
+# For updating the digest use the script: (it uses the tag latest)
+# bash scripts/update_digest auth|expiration|orders|payments|tickets|frontend
+images:
+  - name: jym272/ticketing-auth-api
+    digest: sha256:ddcfbbc84a229120a3aed49f0dd49f67ea4b155587887414e2c84741d15c51ed
+  - name: jym272/ticketing-expiration-api
+    digest: sha256:c4e367d097056320ebf37ccbbb2121382d8d3dbce342e2796463e177663fc990
+  - name: jym272/ticketing-frontend
+    digest: sha256:a873b044e00089360bfc878a0e10cfc4e69de90397d5c77656804bd416e6917b
+  - name: jym272/ticketing-orders-api
+    digest: sha256:38d0775ecaf00678c0ebf04bb97aa11efc1afb632d11960f3c976fa1999149ec
+  - name: jym272/ticketing-tickets-api
+    digest: sha256:db95b92e349242231e8eb1ef8fafdaa74aeb7562a40f35d2f2c8f9999b60f71e
+  - name: jym272/ticketing-payments-api
+    digest: sha256:5124e4989a190d852c257054fa0d39995a30600c72404f33a040860e01a5ec8b
