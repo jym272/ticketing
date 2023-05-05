@@ -15,7 +15,7 @@ configMapGenerator:
     envs:
       - .app_config.env
 # For updating the digest use the script: (it uses the tag latest)
-# bash scripts/update_digest auth|expiration|orders|payments|tickets|frontend
+# bash scripts/update_to_latest_digest auth|expiration|orders|payments|tickets|frontend
 images:
   - name: jym272/ticketing-auth-api
     digest: sha256:ddcfbbc84a229120a3aed49f0dd49f67ea4b155587887414e2c84741d15c51ed
