@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: Node
+metadata:
+  annotations:
+    kubeadm.alpha.kubernetes.io/cri-socket: /var/run/cri-dockerd.sock
+    node.alpha.kubernetes.io/ttl: "0"
+    volumes.kubernetes.io/controller-managed-attach-detach: "true"
+  creationTimestamp: "2023-05-04T20:12:08Z"
+  labels:
+    beta.kubernetes.io/arch: amd64
+    beta.kubernetes.io/os: linux
+    kubernetes.io/arch: amd64
+    kubernetes.io/hostname: multinodes-m02
+    kubernetes.io/os: linux
+  name: multinodes-m02
+  resourceVersion: "10192"
+  uid: 59d64dd2-ec90-45e6-86e7-133b7a52a7a7
+spec:
+  podCIDR: 10.244.1.0/24
+  podCIDRs:
+  - 10.244.1.0/24
+status:
+  addresses:
+  - address: 192.168.50.235
+    type: InternalIP
+  - address: multinodes-m02
+    type: Hostname
+  allocatable:
+    cpu: "3"
+    ephemeral-storage: 17784752Ki
+    hugepages-2Mi: "0"
+    memory: 2017208Ki
+    pods: "110"
+  capacity:
+    cpu: "3"
+    ephemeral-storage: 17784752Ki
+    hugepages-2Mi: "0"
+    memory: 2017208Ki
+    pods: "110"
+  conditions:
+  - lastHeartbeatTime: "2023-05-04T21:46:47Z"
+    lastTransitionTime: "2023-05-04T20:12:08Z"
+    message: kubelet has sufficient memory available
+    reason: KubeletHasSufficientMemory
+    status: "False"
+    type: MemoryPressure
+  - lastHeartbeatTime: "2023-05-04T21:46:47Z"
+    lastTransitionTime: "2023-05-04T20:12:08Z"
+    message: kubelet has no disk pressure
+    reason: KubeletHasNoDiskPressure
+    status: "False"
+    type: DiskPressure
+  - lastHeartbeatTime: "2023-05-04T21:46:47Z"
+    lastTransitionTime: "2023-05-04T20:12:08Z"
+    message: kubelet has sufficient PID available
+    reason: KubeletHasSufficientPID
+    status: "False"
+    type: PIDPressure
+  - lastHeartbeatTime: "2023-05-04T21:46:47Z"
+    lastTransitionTime: "2023-05-04T20:12:29Z"
+    message: kubelet is posting ready status
+    reason: KubeletReady
+    status: "True"
+    type: Ready
+  daemonEndpoints:
+    kubeletEndpoint:
+      Port: 10250
+  images:
+  - names:
+    - jym272/ticketing-payments-api@sha256:792219dc3c4ee76121caed2355768a44b5a450e58d8ee10d30bd8707d13307d5
+    - jym272/ticketing-payments-api:latest
+    sizeBytes: 306480288
+  - names:
+    - registry.k8s.io/etcd@sha256:dd75ec974b0a2a6f6bb47001ba09207976e625db898d1b16735528c009cb171c
+    - registry.k8s.io/etcd:3.5.6-0
+    sizeBytes: 299475478
+  - names:
+    - kubernetesui/dashboard@sha256:2e500d29e9d5f4a086b908eb8dfe7ecac57d2ab09d65b24f588b1d449841ef93
+    sizeBytes: 245710051
+  - names:
+    - registry.k8s.io/kube-apiserver@sha256:b8dda58b0c680898b6ab7fdbd035a75065d3607a70c3c4986bc1d8cfba5f0ec8
+    - registry.k8s.io/kube-apiserver:v1.26.3
+    sizeBytes: 133945535
+  - names:
+    - registry.k8s.io/kube-controller-manager@sha256:28c0deb96fd861af5560b7e24b989a5d61f4a4b8467852d6975bf2a3a5217840
+    - registry.k8s.io/kube-controller-manager:v1.26.3
+    sizeBytes: 123316762
+  - names:
+    - registry.k8s.io/kube-proxy@sha256:d89b6c6a8ecc920753df713b268b0d226f795135c4a0ecc5ce61660e623dd6da
+    - registry.k8s.io/kube-proxy:v1.26.3
+    sizeBytes: 65635949
+  - names:
+    - kindest/kindnetd@sha256:c19d6362a6a928139820761475a38c24c0cf84d507b9ddf414a078cf627497af
+    - kindest/kindnetd:v20230330-48f316cd
+    sizeBytes: 63267044
+  - names:
+    - registry.k8s.io/kube-scheduler@sha256:ef87c0880906a21ba55392e4c28bb75a526dd1e295e423f73e67dfc48e0c345c
+    - registry.k8s.io/kube-scheduler:v1.26.3
+    sizeBytes: 56416728
+  - names:
+    - registry.k8s.io/coredns/coredns@sha256:8e352a029d304ca7431c6507b56800636c321cb52289686a581ab70aaa8a2e2a
+    - registry.k8s.io/coredns/coredns:v1.9.3
+    sizeBytes: 48803555
+  - names:
+    - gcr.io/k8s-minikube/storage-provisioner@sha256:18eb69d1418e854ad5a19e399310e52808a8321e4c441c1dddad8977a0d7a944
+    - gcr.io/k8s-minikube/storage-provisioner:v5
+    sizeBytes: 31465472
+  - names:
+    - redis@sha256:cbcf5bfbc3eaa232b1fa99e539459f46915a41334d46b54bf894f8837a7f071e
+    - redis:alpine
+    sizeBytes: 29939646
+  - names:
+    - nats@sha256:d26b2c764e207148f0f5d297bc003e5db69e59c0de197adb0a0254c3d84872e6
+    - nats:2.9.15-alpine
+    sizeBytes: 20115064
+  - names:
+    - jym272/ticketing-expiration-api@sha256:af8ce17f0d71cc55ead46b54e60f4e4f37b8fd3a3934594860fcdc2f54fe5d34
+    - jym272/ticketing-expiration-api:latest
+    sizeBytes: 18632477
+  - names:
+    - pbitty/hello-from@sha256:815b60bcc226e5e8c43f5d97f778238cd96937e1e0b34da00881b3881cbfbd08
+    - pbitty/hello-from:latest
+    sizeBytes: 10300979
+  - names:
+    - busybox@sha256:b5d6fe0712636ceb7430189de28819e195e8966372edfc2d9409d79402a0dc16
+    - busybox:1.36.0
+    sizeBytes: 4863138
+  - names:
+    - registry.k8s.io/pause@sha256:7031c1b283388d2c2e09b57badb803c05ebed362dc88d84b480cc47f72a21097
+    - registry.k8s.io/pause:3.9
+    sizeBytes: 743952
+  nodeInfo:
+    architecture: amd64
+    bootID: d3452a79-d94f-4072-aad2-a4402d44bb07
+    containerRuntimeVersion: docker://20.10.23
+    kernelVersion: 5.10.57
+    kubeProxyVersion: v1.26.3
+    kubeletVersion: v1.26.3
+    machineID: bf3f6b089c2f4974b47c442de37e7eda
+    operatingSystem: linux
+    osImage: Buildroot 2021.02.12
+    systemUUID: bf3f6b08-9c2f-4974-b47c-442de37e7eda

@@ -12,8 +12,8 @@ configMapGenerator:
   - name: postgres-host
     envs:
       - .postgres_host.env
-# Patch PV volumes from hostPath to NFS
 patches:
+# ---------------- Patch PV volumes from hostPath to NFS --------------
 # nats
   - patch: |-
       - op: replace
@@ -134,3 +134,50 @@ patches:
           path: /data/postgres-tickets
     target:
       name: postgres-tickets-pv
+# ----------------------------- Patch node name ----------------------------------
+# grouping StatefulSet to nodes:
+# multinodes-m02 -> nats, redis
+# multinodes-m03 -> auth, payments
+# multinodes-m03 -> tickets, orders
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m02
+    target:
+      name: redis
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m02
+    target:
+      name: nats
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m03
+    target:
+      name: db-auth
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m03
+    target:
+      name: db-payments
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m04
+    target:
+      name: db-orders
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m04
+    target:
+      name: db-tickets
+      kind: StatefulSet

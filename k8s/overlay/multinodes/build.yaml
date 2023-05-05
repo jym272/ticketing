@@ -1,12 +1,39 @@
-allowVolumeExpansion: true
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: gp3
-parameters:
-  type: gp3
-provisioner: ebs.csi.aws.com
-reclaimPolicy: Retain
+  name: jetstream-sc
+provisioner: kubernetes.io/no-provisioner
+volumeBindingMode: WaitForFirstConsumer
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-auth-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-orders-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-payments-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-tickets-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: redis-sc
+provisioner: kubernetes.io/no-provisioner
 volumeBindingMode: WaitForFirstConsumer
 ---
 apiVersion: v1
@@ -58,6 +85,19 @@ kind: Secret
 metadata:
   name: stripe-secret-t8b8t4d6kb
 type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: adminer
+  type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service
@@ -212,6 +252,189 @@ spec:
     protocol: TCP
   selector:
     api: tickets
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jetstream-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  nfs:
+    path: /data/jetstream
+    server: 192.168.122.1
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: jetstream-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-auth-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  nfs:
+    path: /data/postgres-auth
+    server: 192.168.122.1
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-auth-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-orders-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  nfs:
+    path: /data/postgres-orders
+    server: 192.168.122.1
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-orders-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-payments-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  nfs:
+    path: /data/postgres-payments
+    server: 192.168.122.1
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-payments-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-tickets-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  nfs:
+    path: /data/postgres-tickets
+    server: 192.168.122.1
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-tickets-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-pv
+spec:
+  accessModes:
+  - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  nfs:
+    path: /data/redis
+    server: 192.168.122.1
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: redis-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jetstream-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: jetstream-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-auth-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: postgres-auth-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-orders-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: postgres-orders-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-payments-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: postgres-payments-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-tickets-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: postgres-tickets-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+spec:
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: redis-sc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer
+spec:
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+      - env:
+        - name: ADMINER_DESIGN
+          value: dracula
+        image: adminer:4
+        imagePullPolicy: IfNotPresent
+        name: adminer
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -371,9 +594,9 @@ spec:
       containers:
       - env:
         - name: INGRESS_NS
-          value: default
+          value: ingress-nginx
         - name: INGRESS_SVC
-          value: nginx-ingress-ingress-nginx-controller
+          value: ingress-nginx-controller
         - name: STRIPE_PUBLISHABLE_KEY
           valueFrom:
             secretKeyRef:
@@ -666,15 +889,6 @@ spec:
       labels:
         db: auth
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values:
-                - sa-east-1b
       containers:
       - env:
         - name: POSTGRES_USER
@@ -723,16 +937,11 @@ spec:
         volumeMounts:
         - mountPath: var/lib/postgresql/data
           name: auth-claim
-  volumeClaimTemplates:
-  - metadata:
-      name: auth-claim
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-      storageClassName: gp3
+      nodeName: multinodes-m03
+      volumes:
+      - name: auth-claim
+        persistentVolumeClaim:
+          claimName: postgres-auth-pvc
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -750,15 +959,6 @@ spec:
       labels:
         db: orders
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values:
-                - sa-east-1c
       containers:
       - env:
         - name: POSTGRES_USER
@@ -807,16 +1007,11 @@ spec:
         volumeMounts:
         - mountPath: var/lib/postgresql/data
           name: orders-claim
-  volumeClaimTemplates:
-  - metadata:
-      name: orders-claim
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-      storageClassName: gp3
+      nodeName: multinodes-m04
+      volumes:
+      - name: orders-claim
+        persistentVolumeClaim:
+          claimName: postgres-orders-pvc
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -834,15 +1029,6 @@ spec:
       labels:
         db: payments
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values:
-                - sa-east-1b
       containers:
       - env:
         - name: POSTGRES_USER
@@ -891,16 +1077,11 @@ spec:
         volumeMounts:
         - mountPath: var/lib/postgresql/data
           name: payments-claim
-  volumeClaimTemplates:
-  - metadata:
-      name: payments-claim
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-      storageClassName: gp3
+      nodeName: multinodes-m03
+      volumes:
+      - name: payments-claim
+        persistentVolumeClaim:
+          claimName: postgres-payments-pvc
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -918,15 +1099,6 @@ spec:
       labels:
         db: tickets
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values:
-                - sa-east-1c
       containers:
       - env:
         - name: POSTGRES_USER
@@ -975,16 +1147,11 @@ spec:
         volumeMounts:
         - mountPath: var/lib/postgresql/data
           name: tickets-claim
-  volumeClaimTemplates:
-  - metadata:
-      name: tickets-claim
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-      storageClassName: gp3
+      nodeName: multinodes-m04
+      volumes:
+      - name: tickets-claim
+        persistentVolumeClaim:
+          claimName: postgres-tickets-pvc
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -1004,15 +1171,6 @@ spec:
       labels:
         app: nats
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values:
-                - sa-east-1a
       containers:
       - command:
         - nats-server
@@ -1040,16 +1198,11 @@ spec:
         volumeMounts:
         - mountPath: /data/jetstream
           name: nats-claim
-  volumeClaimTemplates:
-  - metadata:
-      name: nats-claim
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-      storageClassName: gp3
+      nodeName: multinodes-m02
+      volumes:
+      - name: nats-claim
+        persistentVolumeClaim:
+          claimName: jetstream-pvc
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -1067,15 +1220,6 @@ spec:
       labels:
         app: redis
     spec:
-      affinity:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-            - matchExpressions:
-              - key: topology.kubernetes.io/zone
-                operator: In
-                values:
-                - sa-east-1a
       containers:
       - command:
         - redis-server
@@ -1112,13 +1256,56 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: redis-claim
-  volumeClaimTemplates:
-  - metadata:
-      name: redis-claim
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-      storageClassName: gp3
+      nodeName: multinodes-m02
+      volumes:
+      - name: redis-claim
+        persistentVolumeClaim:
+          claimName: redis-pvc
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  name: ingress-srv
+spec:
+  rules:
+  - host: ticketing.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: auth-api
+            port:
+              number: 3050
+        path: /api/users/?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: tickets-api
+            port:
+              number: 3051
+        path: /api/tickets/?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: orders-api
+            port:
+              number: 3052
+        path: /api/orders/?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: payments-api
+            port:
+              number: 3054
+        path: /api/payments/?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+        path: /?(.*)
+        pathType: Prefix

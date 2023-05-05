@@ -1,2 +1,3 @@
 - [ingress_and_cert-manager](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm)
-- [how-to-add-volumes](https://docs.digitalocean.com/products/kubernetes/how-to/add-volumes/)
+- [ebs_csi_addon](https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/)
+  - [examples](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes)

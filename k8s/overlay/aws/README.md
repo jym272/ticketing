@@ -25,7 +25,7 @@ terraform apply -auto-approve
 ```
 Add context to kubectl:
 ```bash
-aws eks update-kubeconfig --name $(terraform output -raw cluster_name)
+aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terraform output -raw cluster_name)
 ```
 
 ### Install nginx and cert-manager
@@ -47,12 +47,13 @@ Run this command to watch the Load Balancer become available, `EXTERNAL-IP` must
 kubectl --namespace default get services -o wide -w nginx-ingress-ingress-nginx-controller
 ```
 ### Manage DNS Records
-Using Route 53 with a host zone created add the CNAME Records for the subdomains, the value is 
+Using Route 53 with a host zone already created, add the CNAME Records for the subdomains, the 
+value is 
 the EXTERNAL-IP of the Load Balancer.
-![image info](./readme_files/subdomains.png)
+![image info](./.assets/subdomains.png)
 
 The domain is administrated by Namecheap, add the CNAME Records for the subdomains also.
-![image info](./readme_files/namecheap.png)
+![image info](./.assets/namecheap.png)
 
 Wait for the subdomains to be available. [check propagation of domains](https://www.whatsmydns.net/#CNAME/)
 
@@ -135,14 +136,14 @@ the name of `secretName`in ingress.
 
 
 ### Volumes
-For information about volumes in Digital Ocean, follow the [tutorial](./tutorials/README.md).
+For information about volumes in AWS, follow the [tutorial](./tutorials/README.md).
 
 ## Resources
 ### Create
 ```bash
-kubectl apply -k k8s/overlay/digitalOcean/  
+kubectl apply -k k8s/overlay/aws/  
 # uncomment cert-manager.io/cluster-issuer: letsencrypt-prod line only if you have a valid certificate
-kubectll apply -f k8s/overlay/digitalOcean/ingress.yaml
+kubectll apply -f k8s/overlay/aws/ingress.yaml
 ```
 ### Delete
 **EBS Volumes** are created, these need to be deleted manually.

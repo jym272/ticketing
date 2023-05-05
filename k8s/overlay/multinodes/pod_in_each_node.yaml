@@ -31,12 +31,14 @@ spec:
         app: hello
     spec:
       affinity:
+        # https://kubernetes.io/docs/reference/labels-annotations-taints/
+        # https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
         # ⬇⬇⬇ This ensures pods will land on separate hosts
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions: [{ key: app, operator: In, values: [hello] }]
-              topologyKey: "kubernetes.io/hostname"
+              topologyKey: "kubernetes.io/hostname" # kubectl get nodes multinodes-m02 -o yaml
       containers:
         - name: hello-from
           image: pbitty/hello-from:latest

@@ -41,8 +41,6 @@ spec:
                   secretKeyRef:
                     name: stripe-secret
                     key: STRIPE_PUBLISHABLE_KEY
-            - name: INGRESS_METHOD
-              value: http
 
 
 

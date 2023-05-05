@@ -2,7 +2,6 @@ resources:
 - ../../base/
 - ../../base/postgres-db
 - sc-gp3.yaml
-#- ingress2.yaml
 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -127,7 +126,105 @@ patches:
   target:
     kind: Deployment
     name: frontend
-
+# Keep in mind that the underlying EBS volume of a PV is bound to an AZ. If you want to stop and restart the pod later on,
+# make sure to add nodeSelector or nodeAffinity to the YAML specification to run the pod on a node that is part of the same AZ as the EBS volume.
+# 3 nodes -> 3 AZs
+# ----------------------------- Patch node name ----------------------------------
+# https://kubernetes.io/docs/reference/labels-annotations-taints/#topologykubernetesiozone
+# grouping StatefulSet to az
+# nats, redis -> sa-east-1a
+# auth, payments -> sa-east-1b
+# tickets, orders -> sa-east-1c
+- patch: |-
+    - op: add
+      path: /spec/template/spec/affinity
+      value: 
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - sa-east-1a
+  target:
+    name: redis
+    kind: StatefulSet
+- patch: |-
+    - op: add
+      path: /spec/template/spec/affinity
+      value:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - sa-east-1a
+  target:
+    name: nats
+    kind: StatefulSet
+- patch: |-
+    - op: add
+      path: /spec/template/spec/affinity
+      value:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - sa-east-1b
+  target:
+    name: db-auth
+    kind: StatefulSet
+- patch: |-
+    - op: add
+      path: /spec/template/spec/affinity
+      value:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - sa-east-1b
+  target:
+    name: db-payments
+    kind: StatefulSet
+- patch: |-
+    - op: add
+      path: /spec/template/spec/affinity
+      value:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - sa-east-1c
+  target:
+    name: db-orders
+    kind: StatefulSet
+- patch: |-
+    - op: add
+      path: /spec/template/spec/affinity
+      value:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: topology.kubernetes.io/zone
+                    operator: In
+                    values:
+                      - sa-east-1c
+  target:
+    name: db-tickets
+    kind: StatefulSet
 secretGenerator:
   - name: postgres-secret
     envs:

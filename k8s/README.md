@@ -1,4 +1,4 @@
-### Minkube 
+### Minikube 
 Minikube one node, one thing to notice, the hostPath is attach to the minikube node, that's why 
 is called `local`. If this minikube profile is erased, the data is lost.
 
