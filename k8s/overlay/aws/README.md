@@ -1,7 +1,3 @@
-# aSSURE TOPOLOGY IN CREATION AF PVC 
-
-
-q
 **Contents**
 1. [Create Infrastructure in AWS](#create-infrastructure-in-aws)
    1. [Create a Cluster](#create-a-cluster)
@@ -30,7 +26,8 @@ aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terr
 
 ### Install nginx and cert-manager
 
-To install the Nginx Ingress Controller to your cluster, you’ll first need to add its repository to Helm by running:
+To install the Nginx Ingress Controller to your cluster,
+you'll first need to add its repository to Helm by running:
 ```bash
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 ```
@@ -66,7 +63,7 @@ kubectll apply -f k8s/overlay/aws/ingress.yaml
 ```
 
 [Cert Manager nginx doc](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/)
-Before installing Cert-Manager to your cluster via Helm, you’ll create a namespace for it:
+Before installing Cert-Manager to your cluster via Helm, you'll create a namespace for it:
 ```bash
 kubectl create namespace cert-manager
 ```
@@ -136,7 +133,8 @@ the name of `secretName`in ingress.
 
 
 ### Volumes
-For information about volumes in AWS, follow the [tutorial](./tutorials/README.md).
+- [ebs_csi_addon](https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/)
+   - [examples](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes)
 
 ## Resources
 ### Create
@@ -146,7 +144,7 @@ kubectl apply -k k8s/overlay/aws/
 kubectll apply -f k8s/overlay/aws/ingress.yaml
 ```
 ### Delete
-**EBS Volumes** are created, these need to be deleted manually.
+**EBS Volumes** are created by the StatefulSet, these need to be deleted manually.
 When `nginx` is created a `LoadBalancer` is created, this needs to be deleted manually also.
 ```bash
 kubectl delete -k k8s/overlay/aws/

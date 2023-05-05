@@ -1,23 +1,30 @@
-### Minikube 
-Minikube one node, one thing to notice, the hostPath is attach to the minikube node, that's why 
-is called `local`. If this minikube profile is erased, the data is lost.
+## [aws](./aws/README.md)
+## [digitalOcean](./digitalOcean/README.md)
+## Minikube
+**Contents**
+1. [Enable ingress](#enable-ingress)
+2. [NFS Volumes for multinodes profile](#nfs-volumes-for-multinodes-profile)
+   1. [Quick explanation](#quick-explanation)
 
-Multinodes uses `nfs`, the data is storaged in the host machine, if the minikube profile 
+
+
+Two profiles are available, `minikube` and `multinodes`.
+
+**Minikube** profile uses one node, hostPath is attached to the minikube node. If this minikube 
+profile is erased, the data is lost.
+
+**Multinodes** uses `nfs`, the data is storage in the host machine, if the minikube profile 
 `multinodes` is erased, the data is not lost.
 
-```bash
-minikube start --vm-driver kvm2 #the default profile is minikube    
-```
-Minkube multinodes 4
+Start the profiles:
 ```bash
 #minikube start --nodes 2 --cpus 12 --memory 8192 --disk-size 10g --namespace test -p s-node
-# for minikube -> single node max is 12
+# for minikube profile
 minikube start --cpus=max --memory 8192 -p minikube --driver kvm2
-# for multinodes
+# for multinodes profile
 minikube start --nodes 4 --cpus 3 --memory 2048 -p multinodes --driver kvm2
 
 ```
-
 
 ### Enable ingress
 Follow the commands, if the browser shows site not secure, type `thisisunsafe` to continue
@@ -34,12 +41,12 @@ cat /etc/hosts
 
 ```
 
-
-
-### NFS in host -> PV for multinodes
+### NFS Volumes for multinodes profile
 Use the scripts `change_nfs_server_address.sh` and `create_nfs_exports.sh`
 
-Quick explanation: [ref] 
+#### Quick explanation
+
+[Reference] 
 
 First, we need to install the NFS Server and create the NFS export directory on our host
 ```bash
@@ -102,6 +109,4 @@ spec:
       storage: 1Gi
 
 ```
-
-
-[ref]:https://stackoverflow.com/questions/70878064/mounting-volume-for-two-nodes-in-minikube
+[Reference]:https://stackoverflow.com/questions/70878064/mounting-volume-for-two-nodes-in-minikube

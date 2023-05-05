@@ -38,10 +38,10 @@ kubectl --namespace default get services -o wide -w nginx-ingress-ingress-nginx-
 ```
 ### Manage DNS Records
 Add a domain in `Networking` tab in Digital Ocean console, then, direct the hostname to the lb.
-![image info](./readme_files/manage_dns_records_root.png)
+![image info](./.assets/manage_dns_records_root.png)
 
 Create some subdomains.
-![image info](./readme_files/manage_dns_records_subdomain.png)
+![image info](./.assets/manage_dns_records_subdomain.png)
 
 Wait for the subdomains to be available. [check propagation of domains](https://www.whatsmydns.net/#CNAME/)
 

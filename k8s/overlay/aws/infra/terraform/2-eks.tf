@@ -349,19 +349,8 @@ module "eks" {
     },
   ]
 
-#  node_security_group_additional_rules = {
-#    ingress_allow_access_from_control_plane = {
-#      type                          = "ingress"
-#      protocol                      = "tcp"
-#      from_port                     = 9443
-#      to_port                       = 9443
-#      source_cluster_security_group = true
-#      description                   = "Allow access from control plane to webhook port of AWS load balancer controller"
-#    }
-#  }
-
   tags = {
-    Environment = "staging"
+    Environment = var.environment
   }
 }
 
@@ -394,19 +383,23 @@ data "aws_iam_policy" "ebs_csi_policy" {
 
 module "irsa-ebs-csi" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version = "~> 5.17.0" #TODO update last version
+  version = "~> 5.17.0"
 
   create_role                   = true
   role_name                     = "AmazonEKSTFEBSCSIRole-${local.cluster_name}"
   provider_url                  = module.eks.oidc_provider
   role_policy_arns              = [data.aws_iam_policy.ebs_csi_policy.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+
+  tags = {
+    Environment = var.environment
+  }
 }
 
 resource "aws_eks_addon" "ebs-csi" {
   cluster_name             = local.cluster_name
   addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.18.0-eksbuild.1" #TODO update last version v1.18.0-eksbuild.1
+  addon_version            = "v1.18.0-eksbuild.1"
   service_account_role_arn = module.irsa-ebs-csi.iam_role_arn
   tags = {
     "eks_addon" = "ebs-csi"

@@ -1,3 +1,0 @@
-- op: replace
-  path: /spec/template/spec/initContainers/0/command/2
-  value: "until nc -vz ls-0b45e622b2611858ef29275da010f4ca056feac5.ccbqxi7wrom4.us-east-2.rds.amazonaws.com 5432; do echo waiting for db payments; sleep 2; done"
