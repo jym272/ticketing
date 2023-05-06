@@ -12,8 +12,14 @@ secretGenerator:
       - .stripe.secret
 configMapGenerator:
   - name: app-config
-    envs:
-      - .app_config.env
+    literals: # https://github.com/chalk/supports-color/blob/e06f284193939fbc1c75992871cda2b8192557ec/index.js#L52
+      - FORCE_COLOR=3
+  - name: postgres-host
+    literals:
+      - POSTGRES_HOST_AUTH=db-auth.default.svc.cluster.local
+      - POSTGRES_HOST_ORDERS=db-orders.default.svc.cluster.local
+      - POSTGRES_HOST_PAYMENTS=db-payments.default.svc.cluster.local
+      - POSTGRES_HOST_TICKETS=db-tickets.default.svc.cluster.local
 # For updating the digest use the script: (it uses the tag latest)
 # bash scripts/update_to_latest_digest auth|expiration|orders|payments|tickets|frontend
 images:

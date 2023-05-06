@@ -1,7 +1,6 @@
 resources:
 - ../../base/
 - ../../base/postgres-db
-
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 patches:
@@ -125,12 +124,7 @@ patches:
   target:
     kind: Deployment
     name: frontend
-
 secretGenerator:
   - name: postgres-secret
     envs:
       - .postgres.secret
-configMapGenerator:
-  - name: postgres-host
-    envs:
-      - .postgres_host.env

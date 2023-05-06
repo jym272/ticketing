@@ -40,5 +40,28 @@ To get the url use `bash urls.sh`, it requires credentials:
 Services: auth
 - **Server**: db-{service}
 - **Username**: jorge
-- **Password**: 123456
+- **Password**: 123456 
 
+
+
+
+deseinstalar kubeconfomr
+  hastar yamlint parece candiate y datree
+
+### kustomize advance features
+https://www.innoq.com/en/blog/advanced-kustomize-features/
+
+### DATREE
+Install Datree on your cluster
+Add datree repo and create namespace
+```bash
+helm repo add datree-webhook https://datreeio.github.io/admission-webhook-datree
+helm repo update
+```
+Install datree using Helm
+```bash
+helm install -n datree datree-webhook datree-webhook/datree-admission-webhook --debug \
+                --create-namespace \
+                --set datree.token=11c39b3e-7cd9-4c4f-9cb3-xxxxxxx \
+                --set datree.clusterName=$(kubectl config current-context)
+```

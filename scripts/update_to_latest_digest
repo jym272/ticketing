@@ -45,4 +45,4 @@ yq-docker() {
   docker run --rm -i -v "$PARENT_DIRECTORY/k8s/base":/workdir mikefarah/yq "$@"
 }
 yq-docker eval ".images[] |= select(.name == \"$image\").digest = \"$digest\"" -i kustomization.yml
-echo -e "\e[1;32mNew Digest: $digest\e[0m"
+echo -e "\e[1;32mDigest: $digest\e[0m"

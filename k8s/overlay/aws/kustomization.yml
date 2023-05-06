@@ -229,7 +229,3 @@ secretGenerator:
   - name: postgres-secret
     envs:
       - .postgres.secret
-configMapGenerator:
-  - name: postgres-host
-    envs:
-      - .postgres_host.env

@@ -1,0 +1,1297 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: jetstream-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-auth-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-orders-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-payments-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-tickets-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: redis-sc
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: v1
+data:
+  FORCE_COLOR: "3"
+kind: ConfigMap
+metadata:
+  name: app-config-9689d4k2h2
+---
+apiVersion: v1
+data:
+  POSTGRES_HOST_AUTH: db-auth.default.svc.cluster.local
+  POSTGRES_HOST_ORDERS: db-orders.default.svc.cluster.local
+  POSTGRES_HOST_PAYMENTS: db-payments.default.svc.cluster.local
+  POSTGRES_HOST_TICKETS: db-tickets.default.svc.cluster.local
+kind: ConfigMap
+metadata:
+  name: postgres-host-mk497md22c
+---
+apiVersion: v1
+data:
+  JWT_SECRET: PVE1blQxOE9rVXVIYW0vWTVCUmJ6WTNTWWx3TnFwSlJkdllWd1MvZ3plY2M9
+  PASSWORD_PEPPER: PVhlRFJNenE5SHB1V0wyWllCdzJCRGkxc3hqVDVkbk9TZE9GRVUwMHd2cG89
+kind: Secret
+metadata:
+  name: auth-secret-t4h4c4m595
+type: Opaque
+---
+apiVersion: v1
+data:
+  POSTGRES_PASSWORD: MTIzNDU2
+  POSTGRES_USER: am9yZ2U=
+kind: Secret
+metadata:
+  name: postgres-secret-hh9kgd2588
+type: Opaque
+---
+apiVersion: v1
+data:
+  STRIPE_PUBLISHABLE_KEY: |
+    cGtfdGVzdF81MUtqOGpURkNTOGdNZjdjcU9aV0FzR3FVd0ZtQktBcHloQ2xoUUlWdUJnTn
+    N1TEVzcmpaOURGdk5jWlBVMThONXpmTUdEN1d4bXZmcm5HSXdLMmtYZnJ5VjAwS3M2VEFJ
+    NVA=
+  STRIPE_SECRET_KEY: |
+    c2tfdGVzdF81MUtqOGpURkNTOGdNZjdjcVY2TnFMTHN1QW9sYWdkOXk1WXl6bmFGamVqTG
+    YzMjU0WENSZ242c0VjSkE4VTJlMU9FeGtYd1Y2WGF1ZWxlRXgzdWViSXBSRjAwTDB4M2pz
+    OXE=
+kind: Secret
+metadata:
+  name: stripe-secret-t8b8t4d6kb
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adminer
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: adminer
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-api
+spec:
+  ports:
+  - name: auth
+    port: 3050
+    protocol: TCP
+  selector:
+    api: auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-auth
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+  selector:
+    db: auth
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-orders
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+  selector:
+    db: orders
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-payments
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+  selector:
+    db: payments
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-tickets
+spec:
+  clusterIP: None
+  ports:
+  - name: postgres
+    port: 5432
+    protocol: TCP
+  selector:
+    db: tickets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expiration-api
+spec:
+  ports:
+  - name: expiration
+    port: 3053
+    protocol: TCP
+  selector:
+    api: expiration
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  ports:
+  - name: frontend
+    port: 3000
+    protocol: TCP
+  selector:
+    api: frontend
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats
+spec:
+  clusterIP: None
+  ports:
+  - name: nats-client
+    port: 4222
+    protocol: TCP
+  - name: nats-monitoring
+    port: 8222
+    protocol: TCP
+  selector:
+    app: nats
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: orders-api
+spec:
+  ports:
+  - name: orders
+    port: 3052
+    protocol: TCP
+  selector:
+    api: orders
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payments-api
+spec:
+  ports:
+  - name: payments
+    port: 3054
+    protocol: TCP
+  selector:
+    api: payments
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  clusterIP: None
+  ports:
+  - name: redis-port
+    port: 6379
+    targetPort: 6379
+  selector:
+    app: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickets-api
+spec:
+  ports:
+  - name: tickets
+    port: 3051
+    protocol: TCP
+  selector:
+    api: tickets
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jetstream-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /data/jetstream
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: jetstream-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-auth-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /data/postgres-auth
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-auth-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-orders-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /data/postgres-orders
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-orders-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-payments-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /data/postgres-payments
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-payments-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-tickets-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /data/postgres-tickets
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: postgres-tickets-sc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-pv
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /data/redis
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: redis-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jetstream-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: jetstream-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-auth-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: postgres-auth-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-orders-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: postgres-orders-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-payments-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: postgres-payments-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-tickets-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: postgres-tickets-sc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: redis-sc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adminer
+spec:
+  selector:
+    matchLabels:
+      app: adminer
+  template:
+    metadata:
+      labels:
+        app: adminer
+    spec:
+      containers:
+      - env:
+        - name: ADMINER_DESIGN
+          value: dracula
+        image: adminer:4
+        imagePullPolicy: IfNotPresent
+        name: adminer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      api: auth
+  template:
+    metadata:
+      labels:
+        api: auth
+    spec:
+      containers:
+      - env:
+        - name: FORCE_COLOR
+          valueFrom:
+            configMapKeyRef:
+              key: FORCE_COLOR
+              name: app-config-9689d4k2h2
+        - name: PORT
+          value: "3050"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_DB
+          value: auth
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_HOST_AUTH
+              name: postgres-host-mk497md22c
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: PASSWORD_PEPPER
+          valueFrom:
+            secretKeyRef:
+              key: PASSWORD_PEPPER
+              name: auth-secret-t4h4c4m595
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: JWT_SECRET
+              name: auth-secret-t4h4c4m595
+        image: jym272/ticketing-auth-api@sha256:ddcfbbc84a229120a3aed49f0dd49f67ea4b155587887414e2c84741d15c51ed
+        livenessProbe:
+          failureThreshold: 2
+          httpGet:
+            path: /health
+            port: 3050
+          periodSeconds: 5
+        name: auth-api
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 3050
+          periodSeconds: 1
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -vz db-auth.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          5432; do echo waiting for db auth; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-postgres
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expiration-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      api: expiration
+  template:
+    metadata:
+      labels:
+        api: expiration
+    spec:
+      containers:
+      - env:
+        - name: FORCE_COLOR
+          valueFrom:
+            configMapKeyRef:
+              key: FORCE_COLOR
+              name: app-config-9689d4k2h2
+        - name: PORT
+          value: "3053"
+        - name: NATS_SERVER_HOST
+          value: nats.default.svc.cluster.local
+        - name: NATS_SERVER_PORT
+          value: "4222"
+        - name: NACK_DELAY_MS
+          value: "1000"
+        - name: REDIS_HOST
+          value: redis.default.svc.cluster.local
+        - name: REDIS_PORT
+          value: "6379"
+        image: jym272/ticketing-expiration-api@sha256:c4e367d097056320ebf37ccbbb2121382d8d3dbce342e2796463e177663fc990
+        livenessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /api/healthz
+            port: 3053
+          periodSeconds: 5
+        name: expiration-api
+        startupProbe:
+          failureThreshold: 60
+          httpGet:
+            path: /health
+            port: 3053
+          periodSeconds: 1
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -vz nats.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          4222; do echo waiting for nats; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-nats
+      - command:
+        - sh
+        - -c
+        - until nc -vz redis.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          6379; do echo waiting for redis; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-redis
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      api: frontend
+  template:
+    metadata:
+      labels:
+        api: frontend
+    spec:
+      containers:
+      - env:
+        - name: INGRESS_NS
+          value: ingress-nginx
+        - name: INGRESS_SVC
+          value: ingress-nginx-controller
+        - name: STRIPE_PUBLISHABLE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: STRIPE_PUBLISHABLE_KEY
+              name: stripe-secret-t8b8t4d6kb
+        image: jym272/ticketing-frontend@sha256:a873b044e00089360bfc878a0e10cfc4e69de90397d5c77656804bd416e6917b
+        name: frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orders-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      api: orders
+  template:
+    metadata:
+      labels:
+        api: orders
+    spec:
+      containers:
+      - env:
+        - name: EXPIRATION_ORDER_MINUTES
+          value: "1"
+        - name: FORCE_COLOR
+          valueFrom:
+            configMapKeyRef:
+              key: FORCE_COLOR
+              name: app-config-9689d4k2h2
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: JWT_SECRET
+              name: auth-secret-t4h4c4m595
+        - name: NACK_DELAY_MS
+          value: "1000"
+        - name: NACK_MAX_RETRIES
+          value: "3"
+        - name: NATS_SERVER_HOST
+          value: nats.default.svc.cluster.local
+        - name: NATS_SERVER_PORT
+          value: "4222"
+        - name: PORT
+          value: "3052"
+        - name: POSTGRES_DB
+          value: orders
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_HOST_ORDERS
+              name: postgres-host-mk497md22c
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret-hh9kgd2588
+        image: jym272/ticketing-orders-api@sha256:38d0775ecaf00678c0ebf04bb97aa11efc1afb632d11960f3c976fa1999149ec
+        livenessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /api/healthz
+            port: 3052
+          periodSeconds: 5
+        name: orders-api
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 3052
+          periodSeconds: 1
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -vz db-orders.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          5432; do echo waiting for db orders; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-postgres
+      - command:
+        - sh
+        - -c
+        - until nc -vz nats.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          4222; do echo waiting for nats; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-nats
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      api: payments
+  template:
+    metadata:
+      labels:
+        api: payments
+    spec:
+      containers:
+      - env:
+        - name: FORCE_COLOR
+          valueFrom:
+            configMapKeyRef:
+              key: FORCE_COLOR
+              name: app-config-9689d4k2h2
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: JWT_SECRET
+              name: auth-secret-t4h4c4m595
+        - name: NACK_DELAY_MS
+          value: "1000"
+        - name: NACK_MAX_RETRIES
+          value: "3"
+        - name: NATS_SERVER_HOST
+          value: nats.default.svc.cluster.local
+        - name: NATS_SERVER_PORT
+          value: "4222"
+        - name: PORT
+          value: "3054"
+        - name: POSTGRES_DB
+          value: payments
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_HOST_PAYMENTS
+              name: postgres-host-mk497md22c
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret-hh9kgd2588
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: STRIPE_SECRET_KEY
+              name: stripe-secret-t8b8t4d6kb
+        image: jym272/ticketing-payments-api@sha256:5124e4989a190d852c257054fa0d39995a30600c72404f33a040860e01a5ec8b
+        livenessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /api/healthz
+            port: 3054
+          periodSeconds: 5
+        name: payments-api
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 3054
+          periodSeconds: 1
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -vz db-payments.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          5432; do echo waiting for db payments; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-postgres
+      - command:
+        - sh
+        - -c
+        - until nc -vz nats.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          4222; do echo waiting for nats; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-nats
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tickets-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      api: tickets
+  template:
+    metadata:
+      labels:
+        api: tickets
+    spec:
+      containers:
+      - env:
+        - name: FORCE_COLOR
+          valueFrom:
+            configMapKeyRef:
+              key: FORCE_COLOR
+              name: app-config-9689d4k2h2
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: JWT_SECRET
+              name: auth-secret-t4h4c4m595
+        - name: NACK_DELAY_MS
+          value: "1000"
+        - name: NACK_MAX_RETRIES
+          value: "3"
+        - name: NATS_SERVER_HOST
+          value: nats.default.svc.cluster.local
+        - name: NATS_SERVER_PORT
+          value: "4222"
+        - name: PORT
+          value: "3051"
+        - name: POSTGRES_DB
+          value: tickets
+        - name: POSTGRES_HOST
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_HOST_TICKETS
+              name: postgres-host-mk497md22c
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_PORT
+          value: "5432"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret-hh9kgd2588
+        image: jym272/ticketing-tickets-api@sha256:db95b92e349242231e8eb1ef8fafdaa74aeb7562a40f35d2f2c8f9999b60f71e
+        livenessProbe:
+          failureThreshold: 1
+          httpGet:
+            path: /api/healthz
+            port: 3051
+          periodSeconds: 5
+        name: tickets-api
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /health
+            port: 3051
+          periodSeconds: 1
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -vz db-tickets.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          5432; do echo waiting for db tickets; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-postgres
+      - command:
+        - sh
+        - -c
+        - until nc -vz nats.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local
+          4222; do echo waiting for nats; sleep 2; done
+        image: busybox:1.36.0
+        imagePullPolicy: IfNotPresent
+        name: wait-for-nats
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-auth
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      db: auth
+  serviceName: db-auth
+  template:
+    metadata:
+      labels:
+        db: auth
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_DB
+          value: auth
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret-hh9kgd2588
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - auth
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: db-auth
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - auth
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: var/lib/postgresql/data
+          name: auth-claim
+      volumes:
+      - name: auth-claim
+        persistentVolumeClaim:
+          claimName: postgres-auth-pvc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-orders
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      db: orders
+  serviceName: db-orders
+  template:
+    metadata:
+      labels:
+        db: orders
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_DB
+          value: orders
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret-hh9kgd2588
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - orders
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: db-orders
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - orders
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: var/lib/postgresql/data
+          name: orders-claim
+      volumes:
+      - name: orders-claim
+        persistentVolumeClaim:
+          claimName: postgres-orders-pvc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-payments
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      db: payments
+  serviceName: db-payments
+  template:
+    metadata:
+      labels:
+        db: payments
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_DB
+          value: payments
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret-hh9kgd2588
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - payments
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: db-payments
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - payments
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: var/lib/postgresql/data
+          name: payments-claim
+      volumes:
+      - name: payments-claim
+        persistentVolumeClaim:
+          claimName: postgres-payments-pvc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db-tickets
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      db: tickets
+  serviceName: db-tickets
+  template:
+    metadata:
+      labels:
+        db: tickets
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_USER
+              name: postgres-secret-hh9kgd2588
+        - name: POSTGRES_DB
+          value: tickets
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-secret-hh9kgd2588
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:15.1
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - tickets
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: db-tickets
+        readinessProbe:
+          exec:
+            command:
+            - psql
+            - -U
+            - jorge
+            - -d
+            - tickets
+            - -c
+            - SELECT 1
+          failureThreshold: 2
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: var/lib/postgresql/data
+          name: tickets-claim
+      volumes:
+      - name: tickets-claim
+        persistentVolumeClaim:
+          claimName: postgres-tickets-pvc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: nats
+  name: nats
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nats
+  serviceName: nats
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+      - command:
+        - nats-server
+        - -js
+        - --store_dir=/data
+        - -DV
+        - -m
+        - "8222"
+        image: nats:2.9.15-alpine
+        livenessProbe:
+          failureThreshold: 2
+          httpGet:
+            path: /healthz?js-enabled-only=true
+            port: 8222
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        name: nats
+        readinessProbe:
+          failureThreshold: 2
+          httpGet:
+            path: /healthz?js-enabled-only=true
+            port: 8222
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: /data/jetstream
+          name: nats-claim
+      volumes:
+      - name: nats-claim
+        persistentVolumeClaim:
+          claimName: jetstream-pvc
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+spec:
+  minReadySeconds: 10
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - command:
+        - redis-server
+        - --appendonly
+        - "yes"
+        - --save
+        - "900"
+        - "1"
+        - --save
+        - "300"
+        - "10"
+        - --save
+        - "60"
+        - "10000"
+        image: redis:alpine
+        name: redis
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 3
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        startupProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          failureThreshold: 10
+          periodSeconds: 1
+        volumeMounts:
+        - mountPath: /data
+          name: redis-claim
+      volumes:
+      - name: redis-claim
+        persistentVolumeClaim:
+          claimName: redis-pvc
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  name: ingress-srv
+spec:
+  rules:
+  - host: ticketing.dev
+    http:
+      paths:
+      - backend:
+          service:
+            name: auth-api
+            port:
+              number: 3050
+        path: /api/users/?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: tickets-api
+            port:
+              number: 3051
+        path: /api/tickets/?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: orders-api
+            port:
+              number: 3052
+        path: /api/orders/?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: payments-api
+            port:
+              number: 3054
+        path: /api/payments/?(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: frontend
+            port:
+              number: 3000
+        path: /?(.*)
+        pathType: Prefix
