@@ -126,6 +126,12 @@ the name of `secretName`in ingress.
 [More info and troubleshooting](https://cert-manager.io/docs/troubleshooting/acme/),
 
 ### Volumes
+Storage classes available: `kubectl get storageclasses.storage.k8s.io`.
+
+The `storage-class` used is `do-block-storage` with provisioner `dobs.csi.digitalocean.com`, the 
+Reclaim Policy is `Delete`, the volumes are deleted when the `pvc` is deleted. To mantain the data
+when the `pvc` is deleted, use `do-block-storage-retain` storage class instead.
+
 For information about volumes in Digital Ocean, follow the [tutorial](./tutorials/README.md).
 
 ## Resources
@@ -136,13 +142,18 @@ kubectl apply -k k8s/overlay/digitalOcean/
 kubectll apply -f k8s/overlay/digitalOcean/ingress.yaml
 ```
 ### Delete
-**Volumes** are created, these need to be deleted manually.
-When `nginx` is created a `LoadBalancer` is created, this needs to be deleted manually.
+- **Volumes** are created, these need to be deleted manually.
+- When `nginx` is created a `LoadBalancer` is created, this needs to be deleted manually also.
 ```bash
 kubectl delete -k k8s/overlay/digitalOcean/
 kubectl delete -f k8s/overlay/digitalOcean/ingress.yaml
-# The pvc are dynamically created by StatefulSet, so you need to delete them manually
+```
+The `pvc` are dynamically created by StatefulSet, so you need to delete them manually.
+The volumes are deleted if the storage class used has the `RECLAIMPOLICY` set to `Delete`
+```bash
 kubectl delete pvc auth-claim-db-auth-0 nats-claim-nats-0 orders-claim-db-orders-0 payments-claim-db-payments-0 tickets-claim-db-tickets-0 redis-claim-redis-0
-# The LB also needs to be deleted manually
+```
+Delete the `LoadBalancer` created by `nginx-ingress`:
+```bash
 helm uninstall nginx-ingress
 ```
