@@ -4,3 +4,175 @@ resources:
   - ../../base/ingress
   - ../../base/postgres-db/
   - ../../base/storage
+  - sealedSecrets/sealed-secret-postgres.yaml
+  - sealedSecrets/sealed-secret-stripe.yaml
+  - sealedSecrets/sealed-secret-auth.yaml
+patches:
+  # ---------------- Patch PV volumes from hostPath to NFS --------------
+  # nats
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: jetstream-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/jetstream
+    target:
+      name: jetstream-pv
+  # redis
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: redis-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/redis
+    target:
+      name: redis-pv
+  # postgres-auth
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: postgres-auth-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/postgres-auth
+    target:
+      name: postgres-auth-pv
+  # postgres-orders
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: postgres-orders-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/postgres-orders
+    target:
+      name: postgres-orders-pv
+  # postgres-payments
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: postgres-payments-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/postgres-payments
+    target:
+      name: postgres-payments-pv
+  # postgres-tickets
+  - patch: |-
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+    target:
+      name: postgres-tickets-pvc
+  - patch: |-
+      - op: remove
+        path: /spec/hostPath
+      - op: replace
+        path: /spec/accessModes/0
+        value: ReadWriteMany
+      - op: add
+        path: /spec/nfs
+        value:
+          server: 192.168.122.1
+          path: /data/postgres-tickets
+    target:
+      name: postgres-tickets-pv
+  # ----------------------------- Patch node name ----------------------------------
+  # grouping StatefulSet to nodes:
+  # multinodes-m02 -> nats, redis
+  # multinodes-m03 -> auth, payments
+  # multinodes-m03 -> tickets, orders
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m02
+    target:
+      name: redis
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m02
+    target:
+      name: nats
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m03
+    target:
+      name: db-auth
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m03
+    target:
+      name: db-payments
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m04
+    target:
+      name: db-orders
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/nodeName
+        value: multinodes-m04
+    target:
+      name: db-tickets
+      kind: StatefulSet

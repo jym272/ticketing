@@ -65,3 +65,9 @@ helm install -n datree datree-webhook datree-webhook/datree-admission-webhook --
                 --set datree.token=11c39b3e-7cd9-4c4f-9cb3-xxxxxxx \
                 --set datree.clusterName=$(kubectl config current-context)
 ```
+
+
+# every context in minikube has an ip, if ingress is uses it need to be cahnge in /etc/hosts
+
+
+# documentar mejor el nfs kinda thisngggg
