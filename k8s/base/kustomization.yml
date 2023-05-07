@@ -20,8 +20,8 @@ configMapGenerator:
       - POSTGRES_HOST_ORDERS=db-orders.default.svc.cluster.local
       - POSTGRES_HOST_PAYMENTS=db-payments.default.svc.cluster.local
       - POSTGRES_HOST_TICKETS=db-tickets.default.svc.cluster.local
-# For updating the digest use the script: (it uses the tag latest)
-# bash scripts/update_to_latest_digest auth|expiration|orders|payments|tickets|frontend
+# For updating the digest use the script:
+# bash scripts/update_to_latest_digest [auth|expiration|orders|payments|tickets|frontend]
 images:
   - name: jym272/ticketing-auth-api
     digest: sha256:ddcfbbc84a229120a3aed49f0dd49f67ea4b155587887414e2c84741d15c51ed
