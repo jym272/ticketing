@@ -4,4 +4,4 @@ resources:
   - ../../base/ingress
   - ../../base/postgres-db/
   - ../../base/storage/
-  - sealed-secret-postgres.yaml
+  - sealedSecrets/sealed-secret-postgres.yaml

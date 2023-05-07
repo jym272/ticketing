@@ -28,7 +28,7 @@ If is a known context: **minikube**, **multinodes** the file is created in the f
 `k8s/overlay/<context>`
 
 The scripts take the arguments:
-- **name**: name of the secret
+- **name**: name of the secret, `secretKeyRef.name`
 - **key=value**: key value pairs of the secret
 
 

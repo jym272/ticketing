@@ -5,6 +5,12 @@ set -eou pipefail
 declare context
 declare -a known_contexts=("minikube" "multinodes")
 
+if [ $# -lt 2 ]; then
+	echo -e "\e[31mAt least 2 arguments must be passed\e[0m"
+	echo -e "\e[1;32mUsage: bash $0 secret_name key1=value1 key2=value2 ...\e[0m"
+	exit
+fi
+
 if ! kubectl config current-context &>/dev/null; then
 	echo -e "\e[31mNo context found. Please run: \e[32mkubectl config use-context <context-name>\e[0m"
 	exit
@@ -22,12 +28,6 @@ fi
 
 if ! command -v kubeseal &>/dev/null; then
 	echo -e "\e[31mCommand kubeseal could not be found. Please install it with: \e[32mbrew install kubeseal\e[0m"
-	exit
-fi
-
-if [ $# -lt 2 ]; then
-	echo -e "\e[31mAt least 2 arguments must be passed\e[0m"
-	echo -e "\e[1;32mUsage: bash $0 secret_name key1=value1 key2=value2 ...\e[0m"
 	exit
 fi
 
@@ -63,7 +63,7 @@ fi
 
 DIR_OF_SECRET="."
 if [[ " ${known_contexts[*]} " =~ ${context} ]]; then
-  DIR_OF_SECRET="$PARENT_DIRECTORY/k8s/overlay/$context"
+  DIR_OF_SECRET="$PARENT_DIRECTORY/k8s/overlay/$context/sealedSecrets"
 fi
 
 # don't double quote $from_literals, otherwise it will be considered as a single string
