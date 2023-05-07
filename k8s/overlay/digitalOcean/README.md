@@ -3,8 +3,9 @@
    1. [Create a Cluster](#create-a-cluster)
    2. [Install nginx and cert-manager](#install-nginx-and-cert-manager)
    3. [Manage DNS Records](#manage-dns-records)
-   4. [Securing the Ingress Using Cert-Manager](#securing-the-ingress-using-cert-manager)
-   5. [Volumes](#volumes)
+   4. [Create Sealed Secrets](#create-sealed-secrets)
+   5. [Securing the Ingress Using Cert-Manager](#securing-the-ingress-using-cert-manager)
+   6. [Volumes](#volumes)
 2. [Resources](#resources)
    1. [Create](#create)
    2. [Delete](#delete)
@@ -45,12 +46,18 @@ Create some subdomains.
 
 Wait for the subdomains to be available. [check propagation of domains](https://www.whatsmydns.net/#CNAME/)
 
+### Create Sealed Secrets
+For secrets management `sealed-secrets` is used.
+Follow the
+[instructions.](../../../scripts/README.md#using-sealedsecrets-for-secret-management)
+
+
 ### Securing the Ingress Using Cert-Manager
 Deploy infrastructure for cert-manager:
 ```bash
 kubectl apply -k k8s/overlay/digitalOcean/  
 # comment the line cert-manager.io/cluster-issuer: letsencrypt-prod
-kubectll apply -f k8s/overlay/digitalOcean/ingress.yaml
+kubectl apply -f k8s/overlay/digitalOcean/ingress.yaml
 ```
 
 [Cert Manager nginx doc](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/)
@@ -112,16 +119,11 @@ kubectl get challenges.acme.cert-manager.io -o wide
 kubectl get certificate
 ```
 
-
-
 Wait for **The certificate has been successfully issued** message. 
 If it fails or take more than 10 minutes, review the `domains` and the ingress file, you can change
 the name of `secretName`in ingress.
 
-
 [More info and troubleshooting](https://cert-manager.io/docs/troubleshooting/acme/),
-
-
 
 ### Volumes
 For information about volumes in Digital Ocean, follow the [tutorial](./tutorials/README.md).

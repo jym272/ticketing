@@ -1,3 +1,10 @@
+**Contents**
+1. [Using SealedSecrets for secret management](#using-sealedsecrets-for-secret-management)
+    1. [Installation of the controller with helm charts](#installation-of-the-controller-with-helm-charts)
+    2. [Installation of cli kubeseal](#installation-of-cli-kubeseal)
+    3. [Creation of secrets](#creation-of-secrets)
+
+
 ## Using SealedSecrets for secret management
 **IMPORTANT**: The secrets created can only be decrypted by the controller 
 `sealed-secrets-controller` of a particular cluster, thereby, is safe to store such 

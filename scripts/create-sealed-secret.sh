@@ -3,7 +3,9 @@
 set -eou pipefail
 
 declare context
-declare -a known_contexts=("minikube" "multinodes")
+declare -A options=(["^do-.*"]="digitalOcean" ["^arn:aws:eks:.*"]="aws" ["multinodes"]="multinodes"
+	["minikube"]="minikube")
+declare -a known_contexts=("${!options[@]}")
 
 if [ $# -lt 2 ]; then
 	echo -e "\e[31mAt least 2 arguments must be passed\e[0m"
@@ -61,9 +63,16 @@ else
 	cmd="yq-docker"
 fi
 
+regex="^($(echo "${known_contexts[@]}" | tr ' ' '|'))$"
 DIR_OF_SECRET="."
-if [[ " ${known_contexts[*]} " =~ ${context} ]]; then
-  DIR_OF_SECRET="$PARENT_DIRECTORY/k8s/overlay/$context/sealedSecrets"
+if [[ $context =~ $regex ]]; then
+#	rematch=${BASH_REMATCH[0]}
+	if [[ $context =~ ${known_contexts[0]} ]]; then
+		context="digitalOcean"
+	elif [[ $context =~ ${known_contexts[1]} ]]; then
+		context="aws"
+	fi
+	DIR_OF_SECRET="$PARENT_DIRECTORY/k8s/overlay/$context/sealedSecrets"
 fi
 
 # don't double quote $from_literals, otherwise it will be considered as a single string

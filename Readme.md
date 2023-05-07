@@ -71,3 +71,6 @@ helm install -n datree datree-webhook datree-webhook/datree-admission-webhook --
 
 
 # documentar mejor el nfs kinda thisngggg
+
+# todo scripts the nfs y documentacion the nfs
+# digital ocean test with secrets 

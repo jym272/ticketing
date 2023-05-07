@@ -1,6 +1,9 @@
 resources:
-- ../../base/
-- ../../base/postgres-db
+  - ../../base/
+  - ../../base/postgres-db
+  - sealedSecrets/sealed-secret-postgres.yaml
+  - sealedSecrets/sealed-secret-stripe.yaml
+  - sealedSecrets/sealed-secret-auth.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 patches:
