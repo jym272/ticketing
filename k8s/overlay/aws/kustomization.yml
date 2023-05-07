@@ -225,7 +225,3 @@ patches:
   target:
     name: db-tickets
     kind: StatefulSet
-secretGenerator:
-  - name: postgres-secret
-    envs:
-      - .postgres.secret

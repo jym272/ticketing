@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+set -eou pipefail
+
+declare context
+declare -a known_contexts=("minikube" "multinodes")
+
 if ! kubectl config current-context &>/dev/null; then
 	echo -e "\e[31mNo context found. Please run: \e[32mkubectl config use-context <context-name>\e[0m"
 	exit
@@ -43,10 +48,29 @@ for literal in "${literals[@]}"; do
 	from_literals="$from_literals $prefix$literal"
 done
 
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PARENT_DIRECTORY="${DIR%/*}"
+
+yq-docker() {
+	docker run --rm -i -v "$DIR":/workdir mikefarah/yq "$@"
+}
+
+if command -v yq &>/dev/null; then
+	cmd="yq"
+else
+	cmd="yq-docker"
+fi
+
+DIR_OF_SECRET="."
+if [[ " ${known_contexts[*]} " =~ ${context} ]]; then
+  DIR_OF_SECRET="$PARENT_DIRECTORY/k8s/overlay/$context"
+fi
+
 # don't double quote $from_literals, otherwise it will be considered as a single string
 kubectl create secret generic "$secret_name" --dry-run=client $from_literals -o yaml |
 	kubeseal \
-		--format yaml >"$secret_name".yaml
+		--format yaml |
+  $cmd eval 'del(.metadata.creationTimestamp) | del(.spec.template.metadata.creationTimestamp)' - \
+    > "$DIR_OF_SECRET/$secret_name.yaml"
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-echo -e "\e[32m$DIR/$secret_name.yaml created\e[0m"
+echo -e "\e[32m$DIR_OF_SECRET/$secret_name.yaml created\e[0m"

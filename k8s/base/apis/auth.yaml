@@ -60,14 +60,14 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: sealed-secret-postgres
                   key: POSTGRES_USER
             - name: POSTGRES_DB
               value: auth
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: sealed-secret-postgres
                   key: POSTGRES_PASSWORD
             - name: POSTGRES_HOST
               valueFrom:

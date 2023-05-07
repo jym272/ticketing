@@ -124,7 +124,3 @@ patches:
   target:
     kind: Deployment
     name: frontend
-secretGenerator:
-  - name: postgres-secret
-    envs:
-      - .postgres.secret

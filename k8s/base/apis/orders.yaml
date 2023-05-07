@@ -91,12 +91,12 @@ spec:
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: sealed-secret-postgres
                   key: POSTGRES_PASSWORD
             - name: POSTGRES_PORT
               value: "5432"
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: sealed-secret-postgres
                   key: POSTGRES_USER

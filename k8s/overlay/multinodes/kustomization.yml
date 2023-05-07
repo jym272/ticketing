@@ -4,8 +4,3 @@ resources:
   - ../../base/ingress
   - ../../base/postgres-db/
   - ../../base/storage
-  - postgres-secret.yaml
-#secretGenerator:
-#  - name: postgres-secret
-#    envs:
-#      - .postgres.secret
