@@ -3,13 +3,6 @@ resources:
   - client/frontend.yaml
   - nats/statefulSet.yaml
   - redis/statefulSet.yaml
-secretGenerator:
-  - name: auth-secret
-    envs:
-      - .auth.secret
-  - name: stripe-secret
-    envs:
-      - .stripe.secret
 configMapGenerator:
   - name: app-config
     literals: # https://github.com/chalk/supports-color/blob/e06f284193939fbc1c75992871cda2b8192557ec/index.js#L52

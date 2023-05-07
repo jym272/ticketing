@@ -67,7 +67,7 @@ spec:
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: auth-secret
+                  name: sealed-secret-auth
                   key: JWT_SECRET
             - name: NACK_DELAY_MS
               value: "1000"
@@ -101,5 +101,5 @@ spec:
             - name: STRIPE_SECRET_KEY
               valueFrom:
                 secretKeyRef:
-                  name: stripe-secret
+                  name: sealed-secret-stripe
                   key: STRIPE_SECRET_KEY

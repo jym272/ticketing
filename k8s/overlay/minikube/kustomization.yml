@@ -5,3 +5,5 @@ resources:
   - ../../base/postgres-db/
   - ../../base/storage/
   - sealedSecrets/sealed-secret-postgres.yaml
+  - sealedSecrets/sealed-secret-stripe.yaml
+  - sealedSecrets/sealed-secret-auth.yaml

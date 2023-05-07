@@ -79,10 +79,10 @@ spec:
             - name: PASSWORD_PEPPER
               valueFrom:
                 secretKeyRef:
-                  name: auth-secret
+                  name: sealed-secret-auth
                   key: PASSWORD_PEPPER
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: auth-secret
+                  name: sealed-secret-auth
                   key: JWT_SECRET
