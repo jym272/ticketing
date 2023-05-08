@@ -15,6 +15,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: adminer
+  labels:
+    env: dev
 spec:
   selector:
     matchLabels:

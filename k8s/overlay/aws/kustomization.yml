@@ -225,3 +225,46 @@ patches:
   target:
     name: db-tickets
     kind: StatefulSet
+# -----------------------------  Setting env in Deployments -----------------------------
+- patch: |-
+    - op: replace
+      path: /metadata/labels/env
+      value: stage
+  target:
+    kind: Deployment
+    name: expiration-api
+- patch: |-
+    - op: replace
+      path: /metadata/labels/env
+      value: stage
+  target:
+    kind: Deployment
+    name: auth-api
+- patch: |-
+    - op: replace
+      path: /metadata/labels/env
+      value: stage
+  target:
+    kind: Deployment
+    name: orders-api
+- patch: |-
+    - op: replace
+      path: /metadata/labels/env
+      value: stage
+  target:
+    kind: Deployment
+    name: tickets-api
+- patch: |-
+    - op: replace
+      path: /metadata/labels/env
+      value: stage
+  target:
+    kind: Deployment
+    name: payments-api
+- patch: |-
+    - op: replace
+      path: /metadata/labels/env
+      value: stage
+  target:
+    kind: Deployment
+    name: frontend
