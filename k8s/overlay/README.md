@@ -2,8 +2,9 @@
 ## [digitalOcean](./digitalOcean/README.md)
 ## Minikube
 **Contents**
-1. [Enable ingress](#enable-ingress)
-2. [NFS Volumes for multinodes profile](#nfs-volumes-for-multinodes-profile)
+1. [Create Sealed Secrets](#create-sealed-secrets)
+2. [Enable ingress](#enable-ingress)
+3. [NFS Volumes for multinodes profile](#nfs-volumes-for-multinodes-profile)
    1. [Quick explanation](#quick-explanation)
 
 
@@ -25,6 +26,11 @@ minikube start --cpus=max --memory 8192 -p minikube --driver kvm2
 minikube start --nodes 4 --cpus 3 --memory 2048 -p multinodes --driver kvm2
 
 ```
+### Create Sealed Secrets
+For secrets management `sealed-secrets` is used.
+Follow the
+[instructions.](../../scripts/README.md#using-sealedsecrets-for-secret-management)
+
 
 ### Enable ingress
 Follow the commands, if the browser shows site not secure, type `thisisunsafe` to continue

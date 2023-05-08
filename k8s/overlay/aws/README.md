@@ -1,18 +1,18 @@
 **Contents**
-1. [Create Infrastructure in AWS](#create-infrastructure-in-aws)
-   1. [Create a Cluster](#create-a-cluster)
+1. [Infrastructure in AWS with terraform](#infrastructure-in-aws-with-terraform)
+   1. [Create cluster](#create-cluster)
    2. [Install nginx and cert-manager](#install-nginx-and-cert-manager)
    3. [Manage DNS Records](#manage-dns-records)
-   4. [Securing the Ingress Using Cert-Manager](#securing-the-ingress-using-cert-manager)
-   5. [Volumes](#volumes)
+   4. [Create Sealed Secrets](#create-sealed-secrets)
+   5. [Securing the Ingress Using Cert-Manager](#securing-the-ingress-using-cert-manager)
+   6. [Volumes](#volumes)
 2. [Resources](#resources)
    1. [Create](#create)
    2. [Delete](#delete)
 
 
-## Create Infrastructure in AWS
-### Create a Cluster
-Using `terraform`
+## Infrastructure in AWS with terraform
+### Create cluster
 ```bash
 terraform get 
 terraform init
@@ -53,6 +53,11 @@ The domain is administrated by Namecheap, add the CNAME Records for the subdomai
 ![image info](./.assets/namecheap.png)
 
 Wait for the subdomains to be available. [check propagation of domains](https://www.whatsmydns.net/#CNAME/)
+
+### Create Sealed Secrets
+For secrets management `sealed-secrets` is used.
+Follow the
+[instructions.](../../../scripts/README.md#using-sealedsecrets-for-secret-management)
 
 ### Securing the Ingress Using Cert-Manager
 Deploy infrastructure:
@@ -121,16 +126,11 @@ kubectl get challenges.acme.cert-manager.io -o wide
 kubectl get certificate
 ```
 
-
-
 Wait for **The certificate has been successfully issued** message. 
 If it fails or take more than 10 minutes, review the `domains` and the ingress file, you can change
 the name of `secretName`in ingress.
 
-
 [More info and troubleshooting](https://cert-manager.io/docs/troubleshooting/acme/),
-
-
 
 ### Volumes
 - [ebs_csi_addon](https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/)

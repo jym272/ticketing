@@ -34,7 +34,10 @@ brew install kubeseal
 ```
 ### Creation of secrets
 
-If is a known context: **minikube**, **multinodes** the file is created in the folder
+If is a known context: **minikube**, **multinodes**, **aws**(_arn:aws:eks:*_), **digitalOcean**
+(_do-*_) 
+the file is created in 
+the folder
 `k8s/overlay/<context>`
 
 The scripts take the arguments:
@@ -42,17 +45,21 @@ The scripts take the arguments:
 - **key=value**: key value pairs of the secret
 
 
-Examples:
-```shell
-# postgres secrets
-bash scripts/create-sealed-secret.sh sealed-secret-postgres POSTGRES_PASSWORD=my_secure_pass POSTGRES_USER=admin
-
-# stripe secrets
-bash scripts/create-sealed-secret.sh sealed-secret-stripe STRIPE_SECRET_KEY=sk_test_D23d STRIPE_PUBLISHABLE_KEY=pk_test_51Kqwdqwd
-
-# auth secrets
-# generate secure secret and pepper
-openssl rand -base64 32
-openssl rand -hex 32
-bash scripts/create-sealed-secret.sh sealed-secret-auth JWT_SECRET=my_secure_secret PASSWORD_PEPPER=my_secure_pepper
-```
+The secrets needed are:
+- **Postgres Secrets**
+   ```shell
+   bash scripts/create-sealed-secret.sh sealed-secret-postgres POSTGRES_PASSWORD=my_secure_pass POSTGRES_USER=admin
+   ```
+- **Stripe secrets**
+   ```shell
+   bash scripts/create-sealed-secret.sh sealed-secret-stripe STRIPE_SECRET_KEY=sk_test_D23d STRIPE_PUBLISHABLE_KEY=pk_test_51Kqwdqwd
+   ```
+- **Auth secrets**
+To generate secure secrets use:
+   ```shell
+   openssl rand -base64 32
+   openssl rand -hex 32
+   ```
+   ```shell
+   bash scripts/create-sealed-secret.sh sealed-secret-auth JWT_SECRET=my_secure_secret PASSWORD_PEPPER=my_secure_pepper
+   ```
