@@ -30,6 +30,8 @@ spec:
         - name: adminer
           image: adminer:4
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
           env:
             - name: ADMINER_DESIGN
               value: dracula

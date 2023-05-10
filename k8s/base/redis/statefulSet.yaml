@@ -40,6 +40,8 @@ spec:
       containers:
         - name: redis
           image: redis:alpine
+          securityContext:
+            allowPrivilegeEscalation: false
           volumeMounts:
             - name: redis-claim
               mountPath: /data

@@ -39,6 +39,8 @@ spec:
       containers:
         - name: auth-api
           image: jym272/ticketing-auth-api
+          securityContext:
+            allowPrivilegeEscalation: false
           readinessProbe:
             httpGet:
               path: /health

@@ -48,6 +48,8 @@ spec:
       containers:
         - name: expiration-api
           image: jym272/ticketing-expiration-api
+          securityContext:
+            allowPrivilegeEscalation: false
           readinessProbe: # connection to nats -> fundamental to microservice
             httpGet:
               path: /api/healthz  # /api/healthz

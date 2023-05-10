@@ -28,6 +28,8 @@ spec:
       containers:
         - name: frontend
           image: jym272/ticketing-frontend
+          securityContext:
+            allowPrivilegeEscalation: false
           readinessProbe:
             httpGet:
               path: /api/health
