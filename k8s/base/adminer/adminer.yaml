@@ -33,4 +33,11 @@ spec:
           env:
             - name: ADMINER_DESIGN
               value: dracula
+          resources:
+            limits:
+              memory: 128Mi
+              cpu: 20m
+            requests:
+              memory: 64Mi
+              cpu: 10m
 

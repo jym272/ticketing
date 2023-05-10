@@ -58,6 +58,13 @@ spec:
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
+          resources:
+            requests:
+              cpu: 40m
+              memory: 128Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
           volumeMounts:
             - mountPath: var/lib/postgresql/data
               name: tickets-claim

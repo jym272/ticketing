@@ -17,7 +17,7 @@ metadata:
   labels:
     env: dev
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       api: auth
@@ -39,11 +39,17 @@ spec:
       containers:
         - name: auth-api
           image: jym272/ticketing-auth-api
-          livenessProbe:
+          readinessProbe:
             httpGet:
               path: /health
               port: 3050
             periodSeconds: 5
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3050
+            periodSeconds: 10
             failureThreshold: 2
           startupProbe:
             httpGet:
@@ -51,6 +57,13 @@ spec:
               port: 3050
             failureThreshold: 30
             periodSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
           env:
             - name: FORCE_COLOR
               valueFrom:

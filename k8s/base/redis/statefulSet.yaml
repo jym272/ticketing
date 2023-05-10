@@ -55,6 +55,16 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             successThreshold: 1
+            failureThreshold: 2
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 0
+            periodSeconds: 20
+            timeoutSeconds: 5
+            successThreshold: 1
             failureThreshold: 3
           startupProbe:
             exec:
@@ -63,6 +73,13 @@ spec:
                 - ping
             failureThreshold: 10
             periodSeconds: 1
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
       volumes:
         - name: redis-claim
           persistentVolumeClaim:

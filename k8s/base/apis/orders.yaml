@@ -17,7 +17,7 @@ metadata:
   labels:
     env: dev
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       api: orders
@@ -48,18 +48,31 @@ spec:
       containers:
         - name: orders-api
           image: jym272/ticketing-orders-api
-          livenessProbe: # connection to nats -> fundamental to microservice
+          readinessProbe: # connection to nats -> fundamental to microservice
             httpGet:
               path: /api/healthz  # /api/healthz
               port: 3052
             periodSeconds: 5
             failureThreshold: 1
+          livenessProbe: # connection to nats -> fundamental to microservice
+            httpGet:
+              path: /health  # /api/healthz
+              port: 3052
+            periodSeconds: 10
+            failureThreshold: 2
           startupProbe: #express service
             httpGet:
               path: /health
               port: 3052
             failureThreshold: 30
             periodSeconds: 1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
           env:
             - name: EXPIRATION_ORDER_MINUTES
               value: "1"
