@@ -17,14 +17,14 @@ configMapGenerator:
 # bash scripts/update_to_latest_digest [auth|expiration|orders|payments|tickets|frontend]
 images:
   - name: jym272/ticketing-auth-api
-    digest: sha256:ddcfbbc84a229120a3aed49f0dd49f67ea4b155587887414e2c84741d15c51ed
+    digest: sha256:1f11a9966ef24b457cdd6c7dd4a81495e57866625184485b65d4680c52151ee6
   - name: jym272/ticketing-expiration-api
-    digest: sha256:c4e367d097056320ebf37ccbbb2121382d8d3dbce342e2796463e177663fc990
+    digest: sha256:03001c01e975bd5a3cf071dc328c0cf6b1a2e08bae3757590dc3755c90e71c83
   - name: jym272/ticketing-frontend
-    digest: sha256:a873b044e00089360bfc878a0e10cfc4e69de90397d5c77656804bd416e6917b
+    digest: sha256:ad6727a81a4baa35451123bcea253bf9aa445580d7a4ec1d67aa7b23facc11f6
   - name: jym272/ticketing-orders-api
-    digest: sha256:38d0775ecaf00678c0ebf04bb97aa11efc1afb632d11960f3c976fa1999149ec
+    digest: sha256:68bf5e2a92ee05577c32aea0ba1db904158f880b5dd286da6149f8aaab6ffab7
   - name: jym272/ticketing-tickets-api
-    digest: sha256:db95b92e349242231e8eb1ef8fafdaa74aeb7562a40f35d2f2c8f9999b60f71e
+    digest: sha256:d1da5446dfdd1402f3215880307621aa52ef4ce591aae4b7f0a5ab2dcea6a3e0
   - name: jym272/ticketing-payments-api
-    digest: sha256:5124e4989a190d852c257054fa0d39995a30600c72404f33a040860e01a5ec8b
+    digest: sha256:fe9886a2c4a15cbd156e958867d0bdbe2ec8f879dee7fc30ab5ddd50245888a4
