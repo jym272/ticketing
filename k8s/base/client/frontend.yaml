@@ -15,6 +15,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  labels:
+    env: dev
 spec:
   replicas: 2
   selector:
@@ -29,7 +31,13 @@ spec:
         - name: frontend
           image: jym272/ticketing-frontend
           securityContext:
+            capabilities:
+              drop: [ "NET_RAW" ]
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10000
           readinessProbe:
             httpGet:
               path: /api/health

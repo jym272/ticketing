@@ -23,6 +23,8 @@ spec:
       api: expiration
   template:
     metadata:
+#      annotations:
+#        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
       labels:
         api: expiration
     spec:
@@ -49,7 +51,15 @@ spec:
         - name: expiration-api
           image: jym272/ticketing-expiration-api
           securityContext:
+            seccompProfile:
+              type: RuntimeDefault
+            capabilities:
+              drop: [ "NET_RAW" ]
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10000
           readinessProbe: # connection to nats -> fundamental to microservice
             httpGet:
               path: /api/healthz  # /api/healthz

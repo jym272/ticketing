@@ -20,7 +20,8 @@ metadata:
   annotations:
     datree.skip/CONTAINERS_MISSING_READINESSPROBE_KEY: irrelevant for this deployment.
     datree.skip/CONTAINERS_MISSING_LIVENESSPROBE_KEY: irrelevant for this deployment.
-    datree.skip/CONTAINERS_INCORRECT_RUNASUSER_VALUE_LOWUID: 999 is the adminer user, to use another user create a Dockerfile and use it in the deployment.
+    datree.skip/CONTAINERS_INCORRECT_RUNASNONROOT_VALUE: adminer is not used in production.
+    datree.skip/CONTAINERS_INCORRECT_READONLYROOTFILESYSTEM_VALUE: adminer is not used in production.
 spec:
   selector:
     matchLabels:
@@ -35,10 +36,9 @@ spec:
           image: adminer:4
           imagePullPolicy: IfNotPresent
           securityContext:
+            capabilities:
+              drop: [ "NET_RAW" ]
             allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            runAsUser: 999 #adminer
-            runAsGroup: 999 #adminer
           env:
             - name: ADMINER_DESIGN
               value: dracula

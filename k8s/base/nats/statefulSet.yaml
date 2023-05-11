@@ -32,20 +32,44 @@ spec:
       labels:
         app: nats
     spec:
+      initContainers:
+        - name: create-dir-if-not-exists
+          imagePullPolicy: IfNotPresent
+          image: busybox:1.36.0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if [ ! -d /data/natsData ]; then
+                mkdir -p /data/natsData
+                chown -R 10001:10000 /data/natsData
+                echo "created directory /data/natsData"
+              else
+                echo "directory /data/natsData already exists"
+              fi
+          volumeMounts:
+            - mountPath: /data
+              name: nats-claim
       containers:
         - name: nats
-          image: nats:2.9.15-alpine
+          image: nats:2.9.16-alpine3.17
           securityContext:
+            capabilities:
+              drop: [ "NET_RAW" ]
+            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 10001
+            runAsGroup: 10000
           command:
             - nats-server
             - -js
-            - --store_dir=/data
+            - --store_dir=/data/natsData
             - -DV
             - -m
             - "8222"
           volumeMounts:
-            - mountPath: /data/jetstream
+            - mountPath: /data
               name: nats-claim
           readinessProbe:
             httpGet:

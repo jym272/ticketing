@@ -13,7 +13,7 @@ spec:
         - www.jym272.online
         - test.jym272.online
       #  The secretName must be different for every Ingress you create.
-      secretName: jym272-online-tls
+      secretName: jym272-online-tls-2
   rules:
     - host: "www.jym272.online"
       http:

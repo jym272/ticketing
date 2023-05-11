@@ -24,7 +24,7 @@ fi
 cmd=$(kubectl -n kube-system get pod -l app.kubernetes.io/instance=sealed-secrets --field-selector=status.phase=Running -o=jsonpath='{range .items[*]}{.status.phase}{"\n"}{end}')
 
 if [ -z "$cmd" ]; then
-	echo -e "\e[31mSealed Secrets controller is not running.e[0m"
+	echo -e "\e[31mSealed Secrets controller is not running\e[0m"
 	exit
 fi
 

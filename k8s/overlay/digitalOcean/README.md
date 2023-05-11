@@ -55,8 +55,10 @@ Follow the
 ### Securing the Ingress Using Cert-Manager
 Deploy infrastructure for cert-manager:
 ```bash
-kubectl apply -k k8s/overlay/digitalOcean/  
-# comment the line cert-manager.io/cluster-issuer: letsencrypt-prod
+kubectl apply -k k8s/overlay/digitalOcean/
+```  
+Comment the line `cert-manager.io/cluster-issuer: letsencrypt-prod` in `ingress.yaml` and apply it.
+```bash
 kubectl apply -f k8s/overlay/digitalOcean/ingress.yaml
 ```
 
