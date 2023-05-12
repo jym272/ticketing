@@ -56,41 +56,49 @@ spec:
               type: Unconfined
             capabilities:
               drop: [ "NET_RAW" ]
-#            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             runAsNonRoot: true
-            runAsUser: 10001 #postgres
-            runAsGroup: 10000 #postgres
+            runAsUser: 10001
+            runAsGroup: 10000
           env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: sealed-secret-postgres
-                  key: POSTGRES_USER
             - name: POSTGRES_DB
               value: payments
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: sealed-secret-postgres
-                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_PASSWORD_FILE
+              value: /run/secrets/auth-passwd/POSTGRES_PASSWORD
+            - name: POSTGRES_USER_FILE
+              value: /run/secrets/auth-passwd/POSTGRES_USER
             - name: PGDATA
               value: /var/lib/postgresql/data/pgdata
           livenessProbe:
             exec:
-              command: ["psql", "-U", "jorge", "-d", "payments", "-c", "SELECT 1"]
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  user=$(cat /run/secrets/auth-passwd/POSTGRES_USER)
+                  psql -U "$user" -d payments -c "SELECT 1"
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
           readinessProbe:
             exec:
-              command: ["psql", "-U", "jorge", "-d", "payments", "-c", "SELECT 1"]
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  user=$(cat /run/secrets/auth-passwd/POSTGRES_USER)
+                  psql -U "$user" -d payments -c "SELECT 1"
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
           startupProbe:
             exec:
-              command: [ "pg_isready", "-U", "jorge", "-d", "payments" ]
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  user=$(cat /run/secrets/auth-passwd/POSTGRES_USER)
+                  pg_isready -U "$user"
             periodSeconds: 1
             failureThreshold: 30
           resources:
@@ -103,11 +111,17 @@ spec:
           volumeMounts:
             - mountPath: var/lib/postgresql/data
               name: payments-claim
+            - mountPath: /run/secrets/auth-passwd
+              name: secret-volume
+              readOnly: true
       volumes:
         - name: payments-claim
           persistentVolumeClaim:
             claimName: postgres-payments-pvc
-
+        - name: secret-volume
+          secret:
+            secretName: sealed-secret-postgres
+            optional: false
 
 
 
