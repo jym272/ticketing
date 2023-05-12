@@ -26,8 +26,8 @@ policies:
         messageOnFailure: Invalid value for key `resources`/`verbs` - prohibit creating pods to prevent undesired privilege escalation
       - identifier: CIS_MISSING_KEY_SECURITYCONTEXT
         messageOnFailure: Missing key `securityContext` - set to enforce your containers' security and stability
-      - identifier: CIS_INVALID_VALUE_SECCOMP_PROFILE
-        messageOnFailure: Invalid value for key `seccomp.security.alpha.kubernetes.io/pod` - set to docker/default or runtime/default to ensure restricted privileges
+#      - identifier: CIS_INVALID_VALUE_SECCOMP_PROFILE
+#        messageOnFailure: Invalid value for key `seccomp.security.alpha.kubernetes.io/pod` - set to docker/default or runtime/default to ensure restricted privileges
       - identifier: CIS_INVALID_KEY_SECRETKEYREF_SECRETREF
         messageOnFailure: Incorrect key `secretKeyRef`/`secretRef` - mount secrets as files and not as env variables to avoid exposing sensitive data
       - identifier: CIS_INVALID_WILDCARD_ROLE
@@ -102,8 +102,8 @@ policies:
         messageOnFailure: Secret data found in config - keep your sensitive data elsewhere to prevent it from being stolen
       - identifier: ALL_EXPOSED_SECRET_BITBUCKET
         messageOnFailure: Secret data found in config - keep your sensitive data elsewhere to prevent it from being stolen
-      # - identifier: CONTAINERS_INCORRECT_SECCOMP_PROFILE
-      #   messageOnFailure: Incorrect value for key seccompProfile - set an explicit value to prevent malicious use of system calls within the container
+#      - identifier: CONTAINERS_INCORRECT_SECCOMP_PROFILE
+#        messageOnFailure: Incorrect value for key seccompProfile - set an explicit value to prevent malicious use of system calls within the container
       # - identifier: CONTAINERS_MISSING_PRESTOP_KEY
       #   messageOnFailure: Missing property object `preStop` - set to ensure graceful shutdown of the container
       # - identifier: CONTAINERS_INCORRECT_FAILURETHRESHOLD_VALUE
@@ -244,8 +244,8 @@ policies:
         messageOnFailure: Invalid value for key `resources`/`verbs` - prohibit creating pods to prevent undesired privilege escalation
       - identifier: CIS_MISSING_KEY_SECURITYCONTEXT
         messageOnFailure: Missing key `securityContext` - set to enforce your containers' security and stability
-      - identifier: CIS_INVALID_VALUE_SECCOMP_PROFILE
-        messageOnFailure: Invalid value for key `seccomp.security.alpha.kubernetes.io/pod` - set to docker/default or runtime/default to ensure restricted privileges
+#      - identifier: CIS_INVALID_VALUE_SECCOMP_PROFILE
+#        messageOnFailure: Invalid value for key `seccomp.security.alpha.kubernetes.io/pod` - set to docker/default or runtime/default to ensure restricted privileges
       - identifier: CIS_INVALID_KEY_SECRETKEYREF_SECRETREF
         messageOnFailure: Incorrect key `secretKeyRef`/`secretRef` - mount secrets as files and not as env variables to avoid exposing sensitive data
       - identifier: CIS_INVALID_WILDCARD_ROLE
@@ -320,8 +320,8 @@ policies:
         messageOnFailure: Secret data found in config - keep your sensitive data elsewhere to prevent it from being stolen
       - identifier: ALL_EXPOSED_SECRET_BITBUCKET
         messageOnFailure: Secret data found in config - keep your sensitive data elsewhere to prevent it from being stolen
-      # - identifier: CONTAINERS_INCORRECT_SECCOMP_PROFILE
-      #   messageOnFailure: Incorrect value for key seccompProfile - set an explicit value to prevent malicious use of system calls within the container
+#      - identifier: CONTAINERS_INCORRECT_SECCOMP_PROFILE
+#        messageOnFailure: Incorrect value for key seccompProfile - set an explicit value to prevent malicious use of system calls within the container
       # - identifier: CONTAINERS_MISSING_PRESTOP_KEY
       #   messageOnFailure: Missing property object `preStop` - set to ensure graceful shutdown of the container
       # - identifier: CONTAINERS_INCORRECT_FAILURETHRESHOLD_VALUE

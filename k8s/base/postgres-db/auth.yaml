@@ -53,10 +53,9 @@ spec:
           imagePullPolicy: IfNotPresent
           securityContext:
             seccompProfile:
-              type: Unconfined # supported values: "Localhost", "RuntimeDefault", "Unconfined"
+              type: Unconfined # supported values: "Localhost", "RuntimeDefault"(doesnt work wit liveness), "Unconfined"
             capabilities:
               drop: [ "NET_RAW" ]
-#            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             runAsUser: 10001
@@ -88,6 +87,11 @@ spec:
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
+          startupProbe:
+            exec:
+              command: ["pg_isready", "-U", "jorge", "-d", "auth"]
+            periodSeconds: 1
+            failureThreshold: 30
           resources:
             requests:
               cpu: 40m
@@ -98,6 +102,9 @@ spec:
           volumeMounts:
             - mountPath: var/lib/postgresql/data
               name: auth-claim
+#            - mountPath: var/run/secrets/kubernetes.io/serviceaccount
+#              name: auth-claim
+#              readOnly: true
       volumes:
         - name: auth-claim
           persistentVolumeClaim:

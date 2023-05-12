@@ -88,6 +88,11 @@ spec:
             initialDelaySeconds: 3
             periodSeconds: 5
             failureThreshold: 2
+          startupProbe:
+            exec:
+              command: [ "pg_isready", "-U", "jorge", "-d", "orders" ]
+            periodSeconds: 1
+            failureThreshold: 30
           resources:
             requests:
               cpu: 40m
