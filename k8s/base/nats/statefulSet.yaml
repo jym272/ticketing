@@ -52,7 +52,7 @@ spec:
               name: nats-claim
       containers:
         - name: nats
-          image: nats:2.9.16-alpine3.17
+          image: nats:2-alpine
           securityContext:
             capabilities:
               drop: [ "NET_RAW" ]

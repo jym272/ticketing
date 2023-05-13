@@ -57,7 +57,7 @@ spec:
               name: redis-claim
       containers:
         - name: redis
-          image: redis:7.0.11-alpine3.17
+          image: redis:7-alpine
           securityContext:
             capabilities:
               drop: [ "NET_RAW" ]
