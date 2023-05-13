@@ -17,7 +17,7 @@ jobs:
       - name: run datree policy check
         uses: datreeio/action-datree@main
         with:
-          isKustomize: true
+          isKustomization: true
           path: 'k8s/overlay/digitalOcean'
           cliArguments: '--policy-config policies.yaml'
 #      - name: docker login
