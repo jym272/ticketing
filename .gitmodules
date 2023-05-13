@@ -1,0 +1,21 @@
+[submodule "payments-api"]
+	path = payments-api
+	url = https://github.com/jym272/ticketing-payments
+[submodule "expiration-api"]
+	path = expiration-api
+	url = https://github.com/jym272/ticketing-expiration
+[submodule "client"]
+	path = client
+	url = https://github.com/jym272/ticketing-client
+[submodule "auth-api"]
+	path = auth-api
+	url = https://github.com/jym272/ticketing-auth
+[submodule "orders-api"]
+	path = orders-api
+	url = https://github.com/jym272/ticketing-orders
+[submodule "tickets-api"]
+	path = tickets-api
+	url = https://github.com/jym272/ticketing-tickets
+[submodule "common-api"]
+	path = common-api
+	url = https://github.com/jym272/ticketing-common
