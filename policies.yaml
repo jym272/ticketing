@@ -1,5 +1,4 @@
 apiVersion: v1
-customRules: null
 policies:
   - name: Starter
     isDefault: true
@@ -28,8 +27,8 @@ policies:
         messageOnFailure: Invalid value for key `resources`/`verbs` - prohibit creating pods to prevent undesired privilege escalation
       - identifier: CIS_MISSING_KEY_SECURITYCONTEXT
         messageOnFailure: Missing key `securityContext` - set to enforce your containers' security and stability
-      - identifier: CIS_INVALID_VALUE_SECCOMP_PROFILE
-        messageOnFailure: Invalid value for key `seccomp.security.alpha.kubernetes.io/pod` - set to docker/default or runtime/default to ensure restricted privileges
+#      - identifier: CIS_INVALID_VALUE_SECCOMP_PROFILE
+#        messageOnFailure: Invalid value for key `seccomp.security.alpha.kubernetes.io/pod` - set to docker/default or runtime/default to ensure restricted privileges
       - identifier: CIS_INVALID_KEY_SECRETKEYREF_SECRETREF
         messageOnFailure: Incorrect key `secretKeyRef`/`secretRef` - mount secrets as files and not as env variables to avoid exposing sensitive data
       - identifier: CIS_INVALID_WILDCARD_ROLE
@@ -226,3 +225,100 @@ policies:
         messageOnFailure: Missing property object `requests.memory` - value should be within the accepted boundaries recommended by the organization
       - identifier: CONTAINERS_MISSING_IMAGE_VALUE_VERSION
         messageOnFailure: Incorrect value for key `image` - specify an image version to avoid unpleasant "version surprises" in the future
+      #      - identifier: CONTAINERS_MISSING_IMAGE_VALUE_VERSION
+      #        messageOnFailure: Incorrect value for key `image` - specify an image version to avoid unpleasant "version surprises" in the future
+      # CUSTOM RULES POLICIES
+#      - identifier: CUSTOM_CONTAINERS_MISSING_READINESSPROBE_KEY
+#        messageOnFailure: Missing property object `readinessProbe` - add a properly configured readinessProbe to notify kubelet your Pods are ready for traffic
+#      - identifier: CUSTOM_CONTAINERS_MISSING_LIVENESSPROBE_KEY
+#        messageOnFailure: Missing property object `livenessProbe` - add a properly configured livenessProbe to catch possible deadlocks
+customRules:
+  #  - identifier: CUSTOM_CONTAINERS_MISSING_LIVENESSPROBE_KEY
+  #    name: Ensure each container has a configured liveness probe
+  #    defaultMessageOnFailure: Missing property object `livenessProbe` - add a properly configured livenessProbe to catch possible deadlocks
+  #    schema:
+  #      regoDefinition:
+  #        code: |
+  #          package main
+  #
+  #          violation[isMissingLivenessProbe] {
+  #            supportedKinds := {"Deployment", "StatefulSet", "DaemonSet", "Job", "CronJob", "ReplicaSet", "Pod"}
+  #            supportedKinds[input.kind]
+  #            input.metadata.name != "adminer"
+  #            container := input.spec.template.spec.containers[_]
+  #            not container.livenessProbe
+  #            isMissingLivenessProbe := true
+  #          }
+  ## SPEC.ITEMS.LIVENESSPROBE == REQUIRED
+  - identifier: CUSTOM_CONTAINERS_MISSING_LIVENESSPROBE_KEY
+    name: Ensure each container has a configured liveness probe [CUSTOM RULE]
+    defaultMessageOnFailure: Add liveness probe
+    schema:
+      definitions:
+        specContainers:
+          properties:
+            spec:
+              properties:
+                containers:
+                  items:
+                    required:
+                      - livenessProbe
+      if:
+        properties:
+          metadata:
+            properties:
+              name:
+                not:
+                  anyOf:
+                    - pattern: adminer
+        then:
+          allOf:
+            - $ref: '#/definitions/specContainers'
+          additionalProperties:
+            $ref: '#'
+          items:
+            $ref: '#'
+  ## SPEC.ITEMS.READINESSPROBE == REQUIRED
+  - identifier: CUSTOM_CONTAINERS_MISSING_READINESSPROBE_KEY
+    name: Ensure each container has a configured readiness probe [CUSTOM RULE excluded[adminer] ]
+    defaultMessageOnFailure: Add readinessProbe
+    schema:
+      definitions:
+        specContainers:
+          properties:
+            spec:
+              properties:
+                containers:
+                  items:
+                    required:
+                      - readinessProbe
+      #        excludeAdminer:
+      #          properties:
+      #            metadata:
+      #              properties:
+      #                name:
+      ##                  type: string
+      ##                  pattern: ^(adminer).*$
+      #                  not:
+      #                    pattern: adminer
+      #      anyOf:
+      #        - $ref: '#/definitions/excludeAdminer'
+      if:
+        properties:
+          metadata:
+            properties:
+              name:
+                #                  type: string
+                #                  pattern: ^(adminer).*$ # ^block.list.com/repo-name/.*
+                not:
+                  anyOf:
+                    - pattern: adminer
+      #                    - pattern: frontend
+      then:
+        #https://hub.datree.io/custom-rules/multiple-property-paths
+        allOf:
+          - $ref: '#/definitions/specContainers'
+        additionalProperties:
+          $ref: '#'
+        items:
+          $ref: '#'
