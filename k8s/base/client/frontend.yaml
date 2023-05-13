@@ -71,11 +71,20 @@ spec:
             # kubectl get svc -n ingress-nginx # or de ns where the ingress resides
             - name: INGRESS_SVC
               value: ingress-nginx-controller
-            - name: STRIPE_PUBLISHABLE_KEY
-              valueFrom:
-                  secretKeyRef:
-                    name: sealed-secret-stripe
-                    key: STRIPE_PUBLISHABLE_KEY
+          volumeMounts:
+            - mountPath: /run/secrets/api-secrets
+              name: api-secrets
+              readOnly: true
+      volumes:
+        - name: api-secrets
+          projected:
+            sources:
+              - secret:
+                  name: sealed-secret-stripe
+                  items:
+                    - key: STRIPE_PUBLISHABLE_KEY
+                      path: STRIPE_PUBLISHABLE_KEY
+
 
 
 
