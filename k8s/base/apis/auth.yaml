@@ -84,18 +84,8 @@ spec:
                   key: FORCE_COLOR
             - name: PORT
               value: "3050"
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: sealed-secret-postgres
-                  key: POSTGRES_USER
             - name: POSTGRES_DB
               value: auth
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: sealed-secret-postgres
-                  key: POSTGRES_PASSWORD
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
@@ -103,13 +93,25 @@ spec:
                   key: POSTGRES_HOST_AUTH
             - name: POSTGRES_PORT
               value: "5432"
-            - name: PASSWORD_PEPPER
-              valueFrom:
-                secretKeyRef:
+          volumeMounts:
+            - mountPath: /run/secrets/api-secrets
+              name: api-secrets
+              readOnly: true
+      volumes:
+        - name: api-secrets
+          projected:
+            sources:
+              - secret:
+                  name: sealed-secret-postgres
+                  items:
+                    - key: POSTGRES_USER
+                      path: POSTGRES_USER
+                    - key: POSTGRES_PASSWORD
+                      path: POSTGRES_PASSWORD
+              - secret:
                   name: sealed-secret-auth
-                  key: PASSWORD_PEPPER
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: sealed-secret-auth
-                  key: JWT_SECRET
+                  items:
+                    - key: JWT_SECRET
+                      path: JWT_SECRET
+                    - key: PASSWORD_PEPPER
+                      path: PASSWORD_PEPPER

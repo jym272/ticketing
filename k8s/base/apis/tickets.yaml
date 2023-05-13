@@ -91,11 +91,6 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: FORCE_COLOR
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: sealed-secret-auth
-                  key: JWT_SECRET
             - name: NACK_DELAY_MS
               value: "1000"
             - name: NACK_MAX_RETRIES
@@ -113,15 +108,25 @@ spec:
                 configMapKeyRef:
                   name: postgres-host
                   key: POSTGRES_HOST_TICKETS
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: sealed-secret-postgres
-                  key: POSTGRES_PASSWORD
             - name: POSTGRES_PORT
               value: "5432"
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
+          volumeMounts:
+            - mountPath: /run/secrets/api-secrets
+              name: api-secrets
+              readOnly: true
+      volumes:
+        - name: api-secrets
+          projected:
+            sources:
+              - secret:
                   name: sealed-secret-postgres
-                  key: POSTGRES_USER
+                  items:
+                    - key: POSTGRES_PASSWORD
+                      path: POSTGRES_PASSWORD
+                    - key: POSTGRES_USER
+                      path: POSTGRES_USER
+              - secret:
+                  name: sealed-secret-auth
+                  items:
+                    - key: JWT_SECRET
+                      path: JWT_SECRET
