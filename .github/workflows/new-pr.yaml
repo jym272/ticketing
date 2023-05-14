@@ -10,18 +10,19 @@ jobs:
   #  datree kustomize test --verbose  k8s/overlay/digitalOcean --policy-config policies.yaml
   k8sPolicyCheck:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
+    timeout-minutes: 1
     env:
       DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }}
     steps:
-      - name: checkout
+      -
         uses: actions/checkout@v3
-      - name: run datree policy check
+      -
+        name: run datree policy check
         uses: datreeio/action-datree@main
         with:
           isKustomization: true
           path: 'k8s/overlay/digitalOcean'
-          cliArguments: '--policy-config policies.yaml'
+          cliArguments: '--verbose --policy-config policies.yaml'
 #      - name: docker login
 #        env:
 #          DOCKER_USER: ${{ secrets.DOCKER_USER }}
