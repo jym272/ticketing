@@ -17,6 +17,8 @@ metadata:
   name: frontend
   labels:
     env: dev
+  annotations:
+    datree.skip/CONTAINERS_INCORRECT_READONLYROOTFILESYSTEM_VALUE: next saves cache in /app/.next
 spec:
   replicas: 2
   selector:
@@ -33,7 +35,6 @@ spec:
           securityContext:
             capabilities:
               drop: [ "NET_RAW" ]
-            readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false
             runAsNonRoot: true
             runAsUser: 10001
