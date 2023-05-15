@@ -8,7 +8,7 @@ resources:
   - sealedSecrets/sealed-secret-stripe.yaml
   - sealedSecrets/sealed-secret-auth.yaml
 # --------------- skaffold, don't support digest when tagging the image name-------------------
-# ------------ security context and resources are also omitted for skaffold -------------------
+# ------------ security context and resources are also omitted for skaffold --------------------
 patches:
   - patch: |-
       - op: replace
