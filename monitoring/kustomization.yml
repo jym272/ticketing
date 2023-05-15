@@ -1,0 +1,5 @@
+resources:
+  - ./prometheus
+  - ./metrics
+  - ./node-exporter
+  - ./grafana

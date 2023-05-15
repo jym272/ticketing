@@ -1,0 +1,78 @@
+resources:
+  - ../../base/
+  - ../../base/adminer
+  - ../../base/ingress
+  - ../../base/postgres-db/
+  - ../../base/storage/
+  - sealedSecrets/sealed-secret-postgres.yaml
+  - sealedSecrets/sealed-secret-stripe.yaml
+  - sealedSecrets/sealed-secret-auth.yaml
+# --------------- skaffold, don't support digest when tagging the image name-------------------
+# ------------ security context and resources are also omitted for skaffold -------------------
+patches:
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: jym272/ticketing-frontend
+      - op: remove
+        path: /spec/template/spec/containers/0/securityContext
+      - op: remove
+        path: /spec/template/spec/containers/0/resources
+    target:
+      name: frontend
+      kind: Deployment
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: jym272/ticketing-auth-api
+      - op: remove
+        path: /spec/template/spec/containers/0/securityContext
+      - op: remove
+        path: /spec/template/spec/containers/0/resources
+    target:
+      name: auth-api
+      kind: Deployment
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: jym272/ticketing-expiration-api
+      - op: remove
+        path: /spec/template/spec/containers/0/securityContext
+      - op: remove
+        path: /spec/template/spec/containers/0/resources
+    target:
+        name: expiration-api
+        kind: Deployment
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: jym272/ticketing-orders-api
+      - op: remove
+        path: /spec/template/spec/containers/0/securityContext
+      - op: remove
+        path: /spec/template/spec/containers/0/resources
+    target:
+        name: orders-api
+        kind: Deployment
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: jym272/ticketing-payments-api
+      - op: remove
+        path: /spec/template/spec/containers/0/securityContext
+      - op: remove
+        path: /spec/template/spec/containers/0/resources
+    target:
+        name: payments-api
+        kind: Deployment
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: jym272/ticketing-tickets-api
+      - op: remove
+        path: /spec/template/spec/containers/0/securityContext
+      - op: remove
+        path: /spec/template/spec/containers/0/resources
+    target:
+        name: tickets-api
+        kind: Deployment

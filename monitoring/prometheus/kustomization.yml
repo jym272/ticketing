@@ -1,0 +1,6 @@
+resources:
+  - namespace.yaml
+  - clusterRole.yaml
+  - config-map.yaml
+  - deployment.yaml
+  - service.yaml
