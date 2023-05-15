@@ -10,26 +10,28 @@ jobs:
   k8sPolicyCheck:
     runs-on: ubuntu-latest
     timeout-minutes: 1
-    env:
-      DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }}
     steps:
       -
         uses: actions/checkout@v3
       -
         name: run datree policy check
         uses: datreeio/action-datree@main
+        env:
+          DATREE_TOKEN: ${{ secrets.DATREE_TOKEN }}
         with:
           isKustomization: true
           path: 'k8s/overlay/digitalOcean'
           cliArguments: '--verbose --policy-config policies.yaml -p digitalOcean'
       -
-        name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       -
         name: Save DigitalOcean kubeconfig
         run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITALOCEAN_CLUSTER_ID }}
+      -
+        name: Apply kustomization
+        run: kubectl apply -k k8s/overlay/digitalOcean
 
 #      - name: docker login
 #        env:

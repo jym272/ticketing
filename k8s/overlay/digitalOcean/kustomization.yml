@@ -9,7 +9,7 @@ kind: Kustomization
 patches:
 - patch: |-
     - op: remove
-      path: /spec/template/spec/volumes
+      path: /spec/template/spec/volumes/0
     - op: add
       path: /spec/volumeClaimTemplates
       value:
@@ -27,7 +27,7 @@ patches:
     kind: StatefulSet
 - patch: |-
     - op: remove
-      path: /spec/template/spec/volumes
+      path: /spec/template/spec/volumes/0
     - op: add
       path: /spec/volumeClaimTemplates
       value:
@@ -45,7 +45,7 @@ patches:
     kind: StatefulSet
 - patch: |-
     - op: remove
-      path: /spec/template/spec/volumes
+      path: /spec/template/spec/volumes/0
     - op: add
       path: /spec/volumeClaimTemplates
       value:
@@ -63,7 +63,7 @@ patches:
     kind: StatefulSet
 - patch: |-
     - op: remove
-      path: /spec/template/spec/volumes
+      path: /spec/template/spec/volumes/0
     - op: add
       path: /spec/volumeClaimTemplates
       value:

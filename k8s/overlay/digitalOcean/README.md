@@ -102,12 +102,12 @@ spec:
 ```
 Roll it out with `kubectl`:
 ```bash
-kubectl apply -f production_issuer.yaml
+kubectl apply -f k8s/overlay/digitalOcean/production_issuer.yaml
 ```
 Finally, uncomment the `cert-manager.io/cluster-issuer: letsencrypt-prod` line in `ingress.yaml`
 and apply it.
 ```bash
-kubectl apply -f ingress.yaml
+kubectl apply -f k8s/overlay/digitalOcean/ingress.yaml
 ```
 Once the `ingress.yaml` file is updated, You’ll need to wait a few minutes for the Let’s Encrypt 
 servers to issue a certificate for your domains. In the meantime, you can track progress 
