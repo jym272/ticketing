@@ -7,7 +7,6 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
 
 jobs:
-  #  datree kustomize test --verbose  k8s/overlay/digitalOcean --policy-config policies.yaml
   k8sPolicyCheck:
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -22,7 +21,16 @@ jobs:
         with:
           isKustomization: true
           path: 'k8s/overlay/digitalOcean'
-          cliArguments: '--verbose --policy-config policies.yaml'
+          cliArguments: '--verbose --policy-config policies.yaml -p digitalOcean'
+      -
+        name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      -
+        name: Save DigitalOcean kubeconfig
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITALOCEAN_CLUSTER_ID }}
+
 #      - name: docker login
 #        env:
 #          DOCKER_USER: ${{ secrets.DOCKER_USER }}
