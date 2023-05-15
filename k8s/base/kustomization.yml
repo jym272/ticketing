@@ -21,7 +21,7 @@ images:
   - name: jym272/ticketing-expiration-api
     digest: sha256:03001c01e975bd5a3cf071dc328c0cf6b1a2e08bae3757590dc3755c90e71c83
   - name: jym272/ticketing-frontend
-    digest: sha256:7bd1b2c88be94ac2107d4c63d7d12c16e91f668376ec8968b64a70c3defef1b9
+    digest: sha256:91bdc568409571b88fbfbf6ae065bda748544576762d562e18e843972f1c8f6a
   - name: jym272/ticketing-orders-api
     digest: sha256:f85cb9bbe4f2dd953a393c82296470e96e130a6e5a00b38adef4d6d8fdcf2d89
   - name: jym272/ticketing-tickets-api
