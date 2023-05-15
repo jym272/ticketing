@@ -1,7 +1,10 @@
 name: pull_request
 
 on:
-  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'k8s/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -11,20 +14,3 @@ jobs:
   k8sPolicyCheck:
     uses: ./.github/workflows/k8s-policy-check.yml
     secrets: inherit
-  applyKustomization:
-    needs: [k8sPolicyCheck]
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      -
-        uses: actions/checkout@v3
-      -
-        uses: digitalocean/action-doctl@v2
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      -
-        name: Save DigitalOcean kubeconfig
-        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DIGITALOCEAN_CLUSTER_ID }}
-      -
-        name: Apply kustomization
-        run: kubectl apply -k k8s/overlay/digitalOcean
