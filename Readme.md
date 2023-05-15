@@ -74,3 +74,6 @@ helm install -n datree datree-webhook datree-webhook/datree-admission-webhook --
 
 # todo scripts the nfs y documentacion the nfs
 # digital ocean test with secrets 
+
+# remeber to alwayusupdate the sealed secrets if a secret is changed
+# skaffold overlay uses the sealed secrets of minikube
