@@ -7,8 +7,7 @@ export NATS_URL="nats://localhost:4222"
 # declare a map of unique ids
 declare -A ids
 
-n=1000
-
+n=10
 
 function random_id() {
 #    local min=${1:-0}   # default minimum value is 0
@@ -22,7 +21,10 @@ function random_unique_id() {
     done
     echo "$id"
 }
+dir=$(dirname "$0")
+bash "$dir/create_json.sh"
 
+cd "$dir"
 for i in $(seq 1 $n); do
   iteration=$((i))
   unique_id=$(random_unique_id)
@@ -52,3 +54,5 @@ function write_ids_to_csv() {
 }
 
 write_ids_to_csv
+
+rm -f ./*.test.json

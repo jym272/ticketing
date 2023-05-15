@@ -12,4 +12,4 @@ find_container_using_deploy() {
 }
 
 find_container_using_deploy
-kubectl port-forward "$container_name" "${ports[host]}:${ports[container]}"
+kubectl port-forward "$container_name" "${ports["host"]}:${ports["container"]}"

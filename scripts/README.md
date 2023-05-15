@@ -1,9 +1,24 @@
 **Contents**
-1. [Using SealedSecrets for secret management](#using-sealedsecrets-for-secret-management)
+1. [Update Digest](#update-digest)
+2. [Frontend Logs](#frontend-logs)
+3. [Using SealedSecrets for secret management](#using-sealedsecrets-for-secret-management)
     1. [Installation of the controller with helm charts](#installation-of-the-controller-with-helm-charts)
     2. [Installation of cli kubeseal](#installation-of-cli-kubeseal)
     3. [Creation of secrets](#creation-of-secrets)
 
+## Update Digest
+If a **submodule** has new commits, the digest of the image must be updated.
+The script updates the corresponding digest in the `k8s/base/kustomization.yaml` file.
+
+```shell
+# [auth|expiration|orders|payments|tickets|frontend]
+bash scripts/update-digest.sh <submodule>
+```
+## Frontend Logs
+The script `frontend-logs.sh` is principally used in the **skaffold overlay**
+```shell
+bash scripts/frontend-logs.sh
+```
 
 ## Using SealedSecrets for secret management
 **IMPORTANT**: The secrets created can only be decrypted by the controller 

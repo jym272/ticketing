@@ -5,7 +5,7 @@
 - The Order Service listens to the events create and update Ticket.
 
 ##### Cookie
-- The cookie is directly relate to the JWT_SECRET.
+- The cookie is directly relate to the **JWT_SECRET**.
 - The **script** needs a cookie from a valid user, generate a cookie with the following command:
 
 ```bash
