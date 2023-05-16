@@ -1,10 +1,18 @@
 **Contents**
-1. [Update Digest](#update-digest)
-2. [Frontend Logs](#frontend-logs)
-3. [Using SealedSecrets for secret management](#using-sealedsecrets-for-secret-management)
+1. [Urls](#urls)
+2. [Update Digest](#update-digest)
+3. [Frontend Logs](#frontend-logs)
+4. [Using SealedSecrets for secret management](#using-sealedsecrets-for-secret-management)
     1. [Installation of the controller with helm charts](#installation-of-the-controller-with-helm-charts)
     2. [Installation of cli kubeseal](#installation-of-cli-kubeseal)
     3. [Creation of secrets](#creation-of-secrets)
+
+## Urls
+**Minikube** `http` link for adminer, it can expand to other services modifying the 
+`service_names=(adminer)` variable in the script.
+```shell
+bash scripts/urls.sh
+```
 
 ## Update Digest
 If a **submodule** has new commits, the digest of the image must be updated.
