@@ -1,3 +1,12 @@
+## Ticketing Project
+
+Clone this project including the submodules
+```bash
+git clone --recurse-submodules --remote-su
+```
+
+
+
 ### Installation
 - Install minikube
 - Start minikube
@@ -10,7 +19,7 @@ minikube addons enable ingress
 ```
 
 ### Skaffold dev
-While in development, is not neccesary to have a image in docker hub, `skaffold` will build 
+While in development, is not necessary to have a image in docker hub, `skaffold` will build 
 the image using the `dev.Dockerfile`.
 Get the correct IP address by running `minikube ip` and replace the IP address in `/etc/hosts`.
 
