@@ -5,8 +5,8 @@ on:
     branches:
       - master
     paths:
-      - 'k8s/base/**'
-      - 'k8s/overlay/digitalOcean/**'
+      - 'k8s/base/**/*.(yml|yaml)'
+      - 'k8s/overlay/digitalOcean/**/*.(yml|yaml)'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

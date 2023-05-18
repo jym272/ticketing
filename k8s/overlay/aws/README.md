@@ -1,3 +1,4 @@
+# AWS
 **Contents**
 1. [Infrastructure in AWS with terraform](#infrastructure-in-aws-with-terraform)
    1. [Create cluster](#create-cluster)
@@ -10,9 +11,10 @@
    1. [Create](#create)
    2. [Delete](#delete)
 
-
+---
 ## Infrastructure in AWS with terraform
 ### Create cluster
+The infrastructure is created using terraform, the cluster is created using the module `terraform-aws-eks`.
 ```bash
 terraform get 
 terraform init
@@ -45,11 +47,12 @@ kubectl --namespace default get services -o wide -w nginx-ingress-ingress-nginx-
 ```
 ### Manage DNS Records
 Using Route 53 with a host zone already created, add the CNAME Records for the subdomains, the 
-value is 
-the EXTERNAL-IP of the Load Balancer.
+value is the EXTERNAL-IP of the Load Balancer.
+
 ![image info](./.assets/subdomains.png)
 
 The domain is administrated by Namecheap, add the CNAME Records for the subdomains also.
+
 ![image info](./.assets/namecheap.png)
 
 Wait for the subdomains to be available. [check propagation of domains](https://www.whatsmydns.net/#CNAME/)
@@ -60,10 +63,12 @@ Follow the
 [instructions.](../../../scripts/README.md#using-sealedsecrets-for-secret-management)
 
 ### Securing the Ingress Using Cert-Manager
-Deploy infrastructure:
+Deploy infrastructure first:
 ```bash
-kubectl apply -k k8s/overlay/aws/  
-# comment the line cert-manager.io/cluster-issuer: letsencrypt-prod
+kubectl apply -k k8s/overlay/aws/
+```  
+Comment the line `cert-manager.io/cluster-issuer: letsencrypt-prod` in `ingress.yaml` and apply it.
+```bash
 kubectll apply -f k8s/overlay/aws/ingress.yaml
 ```
 
@@ -107,19 +112,17 @@ spec:
 ```
 Roll it out with `kubectl`:
 ```bash
-kubectl apply -f production_issuer.yaml
+kubectl apply -f k8s/overlay/aws/production_issuer.yaml
 ```
 Finally, uncomment the `cert-manager.io/cluster-issuer: letsencrypt-prod` line in `ingress.yaml`
 and apply it.
 ```bash
-kubectl apply -f ingress.yaml
+kubectl apply -f k8s/overlay/aws/ingress.yaml
 ```
 Once the `ingress.yaml` file is updated, You’ll need to wait a few minutes for the Let’s Encrypt 
 servers to issue a certificate for your domains. In the meantime, you can track progress 
 by inspecting the output of the following command:
 ```bash
-# The secretName must be different for every Ingress you create.
-# in ingress.yaml -> secretName: hello-kubernetes-tls
 kubectl describe certificate jym272-foundation-tls
 # inspect the challenges
 kubectl get challenges.acme.cert-manager.io -o wide
@@ -135,26 +138,38 @@ the name of `secretName`in ingress.
 ### Volumes
 - [ebs_csi_addon](https://aws.amazon.com/blogs/containers/amazon-ebs-csi-driver-is-now-generally-available-in-amazon-eks-add-ons/)
    - [examples](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/tree/master/examples/kubernetes)
+  
+---
 
 ## Resources
 ### Create
 ```bash
-kubectl apply -k k8s/overlay/aws/  
-# uncomment cert-manager.io/cluster-issuer: letsencrypt-prod line only if you have a valid certificate
+kubectl apply -k k8s/overlay/aws/
+```
+Uncomment `cert-manager.io/cluster-issuer: letsencrypt-prod` line only if you have a valid 
+certificate.
+```bash
 kubectll apply -f k8s/overlay/aws/ingress.yaml
 ```
 ### Delete
-**EBS Volumes** are created by the StatefulSet, these need to be deleted manually.
-When `nginx` is created a `LoadBalancer` is created, this needs to be deleted manually also.
+**EBS Volumes** are created by the **StatefulSet**, these needs to be deleted manually.
+
 ```bash
 kubectl delete -k k8s/overlay/aws/
 kubectl delete -f k8s/overlay/aws/ingress.yaml
-# The pvc are dynamically created by StatefulSet, so you need to delete them manually
+```
+The `PVC's` are dynamically created by **StatefulSet**. Delete them manually
+```bash
 kubectl delete pvc auth-claim-db-auth-0 nats-claim-nats-0 orders-claim-db-orders-0 payments-claim-db-payments-0 tickets-claim-db-tickets-0 redis-claim-redis-0
-# If the reclaimPolicy: Retain in the storage class, the pv are not deleted, you need to delete 
-# them manually also, otherwise the EBS Volumes are not deleted, even, when the infrastructure is deleted.
-# with terraform destroy
+```
+If the `reclaimPolicy: Retain`policy is used in the **storage class**, the **PV's** are not 
+deleted, 
+you need to delete them manually also, otherwise the **EBS Volumes** are not deleted, even if 
+the infrastructure is deleted with terraform destroy.
+```bash
 kubectl delete pv $(kubectl get pv | grep Released | awk '{print $1}')
-# The LB also needs to be deleted manually
+```
+When `nginx` is created a `LoadBalancer` is created, this also needs to be deleted manually.
+```bash
 helm uninstall nginx-ingress
 ```

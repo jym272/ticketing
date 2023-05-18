@@ -1,88 +1,74 @@
-## Ticketing Project
+# Ticketing Project
 
-Clone this project including the submodules
-```bash
-git clone --recurse-submodules --remote-su
-```
+The **microservices project** consists of multiple services that communicate with each other using 
+**NATS Streaming Server**.
+Each service has its own **PostgreSQL** database. 
+Additionally, the Expiration API utilizes **Redis** database for handling _expired payments_.
 
+The choice of storage volumes depends on the overlay / environment used in the infrastructure 
+deployment.
 
+For local database management, **Adminer** is used as a tool. Adminer allows users to interact with 
+and manage the databases in the project.
+ 
+This project draws inspiration from the  [Microservices with Node JS and React](https://www.udemy.com/course/microservices-with-node-js-and-react/) course by Stephen Grider.
+While the project is not an exact replica of the course material, it incorporates similar principles and concepts discussed in the course.
 
-### Installation
-- Install minikube
-- Start minikube
-- Init ingress in minikube with `minikube addons enable ingress`
+---
+**Contents**
+1. [Initial Setup](#initial-setup)
+2. [Environments](#environments)
+3. [Microservices](#microservices)
+---
+## Initial Setup
+> To clone this project including its submodules updated to the latest revision use this command:
+>```bash
+>git clone --recurse-submodules --remote-submodules https://github.com/jym272/ticketing.git
+>```
+---
+## Environments
+The **application** utilizes _**kustomize**_, a configuration management tool, to handle different environments. 
+The project consists of a `base` configuration that remains the same across all environments. 
+However, the variations among environments are managed through the overlays folder.
 
-### Minkube setup
-```bash
-minikube start --vm-driver kvm2
-minikube addons enable ingress
-```
+Within each overlay, there is a `kustomization.yaml` file that specifies the base configuration. 
+Additionally, the overlays apply specific _patches_ to modify and 'kustomize' the base configuration 
+according to the requirements of each environment. 
 
-### Skaffold dev
-While in development, is not necessary to have a image in docker hub, `skaffold` will build 
-the image using the `dev.Dockerfile`.
-Get the correct IP address by running `minikube ip` and replace the IP address in `/etc/hosts`.
+This approach allows for easy management and customization of the application's configuration for 
+different deployment scenarios.
+For more advanced features of kustomize, you can refer to the 
+[Advanced Kustomize Features](https://www.innoq.com/en/blog/advanced-kustomize-features/) article.
 
-```bash
-# /etc/hosts
-...
-192.168.36.xxx posts.com
-```
-Run the following command to start the application.
-```bash
-skaffold dev --profile local
-```
+The different **environments/overlays** are:
+>- #### [AWS](./k8s/overlay/aws/README.md)
+>- #### [DigitalOcean](./k8s/overlay/digitalOcean/README.md)
+>- #### [minikube](./k8s/overlay/minikube/README.md)
+>- #### [skaffold](./k8s/overlay/skaffold/README.md)
+---
+## Microservices
 
+In this microservices project, the communication between services is facilitated by **Nats 
+Streaming Server**, 
+which provides a messaging system. The **REST APIs** are primarily implemented using **Node.js**, 
+except for the Expiration API, which is written in **Go**.
 
-### Bypass the unsafe certificate
-if chrome/mozilla does not allow you to access the site defined in `ingress.yaml`, you can bypass 
-the unsafe 
-certificate 
-by running the following command in the browser:
-- **thisisunsafe**
+The client-side application is developed using the **Next.js** framework, which is a popular choice 
+for building server-rendered React applications.
 
-Just write it directly in the browser and it will bypass the unsafe certificate.
-
-### Adminer
-To get the url use `bash urls.sh`, it requires credentials:
-
-Services: auth
-- **Server**: db-{service}
-- **Username**: jorge
-- **Password**: 123456 
-
-
-
-
-deseinstalar kubeconfomr
-  hastar yamlint parece candiate y datree
-
-### kustomize advance features
-https://www.innoq.com/en/blog/advanced-kustomize-features/
-
-### DATREE
-Install Datree on your cluster
-Add datree repo and create namespace
-```bash
-helm repo add datree-webhook https://datreeio.github.io/admission-webhook-datree
-helm repo update
-```
-Install datree using Helm
-```bash
-helm install -n datree datree-webhook datree-webhook/datree-admission-webhook --debug \
-                --create-namespace \
-                --set datree.token=11c39b3e-7cd9-4c4f-9cb3-xxxxxxx \
-                --set datree.clusterName=$(kubectl config current-context)
-```
-
-
-# every context in minikube has an ip, if ingress is uses it need to be cahnge in /etc/hosts
-
-
-# documentar mejor el nfs kinda thisngggg
-
-# todo scripts the nfs y documentacion the nfs
-# digital ocean test with secrets 
-
-# remeber to alwayusupdate the sealed secrets if a secret is changed
-# skaffold overlay uses the sealed secrets of minikube
+To handle networking and routing, a **Nginx Ingress Controller** is utilized. The 
+[**Nginx Ingress Service**](./k8s/base/ingress/ingress.yaml) 
+acts as an entry point for external traffic, manages load balancing, and handles 
+routing requests to the appropriate services within the microservices architecture.
+> ### Rest APIs
+> - [auth-api](https://github.com/jym272/ticketing-auth)
+> - [expiration-api](https://github.com/jym272/ticketing-expiration)
+> - [orders-api](https://github.com/jym272/ticketing-orders)
+> - [payments-api](https://github.com/jym272/ticketing-payments)
+> - [tickets-api](https://github.com/jym272/ticketing-tickets)
+> ### Common Library
+> Used in all Api's, except `expiration-api`:
+> - [common](https://github.com/jym272/ticketing-common)
+> ### Client
+> Frontend or client:
+> - [client](https://github.com/jym272/ticketing-client)

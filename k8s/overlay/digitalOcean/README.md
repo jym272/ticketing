@@ -1,3 +1,4 @@
+# Digital Ocean
 **Contents**
 1. [Create Infrastructure of Digital Ocean](#create-infrastructure-of-digital-ocean)
    1. [Create a Cluster](#create-a-cluster)
@@ -9,8 +10,7 @@
 2. [Resources](#resources)
    1. [Create](#create)
    2. [Delete](#delete)
-
-
+---
 ## Create Infrastructure of Digital Ocean
 ### Create a Cluster
 - Create a cluster- > use the [console](https://cloud.digitalocean.com/login). Default options are fine, only select scale type `Autoscale`.
@@ -136,6 +136,7 @@ when the `pvc` is deleted, use `do-block-storage-retain` storage class instead.
 
 For information about volumes in Digital Ocean, follow the [tutorial](./tutorials/README.md).
 
+---
 ## Resources
 ### Create
 ```bash
