@@ -1,5 +1,4 @@
-
-### Testing Orders API
+## Testing Orders API
 
 - It needs **PORT-FORWARDING** for the **nats** service:
     ```bash
@@ -28,7 +27,7 @@ with lower version that the current version can arrive first, the API should nac
     sort ids.test.csv | uniq -d
     ```
 
-**WARNING**: The db it must be deleted before run this test. Orders API Ticket model is 
+>**WARNING**: The db it must be deleted before run this test. Orders API Ticket model is 
 the replica of the Ticket model in the Ticket Service, the Ticket API Service versions the 
 Ticket Model.
 

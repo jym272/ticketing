@@ -3,7 +3,8 @@
 1. [Profiles](#profiles)
 2. [Create Sealed Secrets](#create-sealed-secrets)
 3. [Enable ingress](#enable-ingress)
-4. [NFS Volumes for multinodes profile](#nfs-volumes-for-multinodes-profile)
+4. [Enable metrics-server](#enable-metrics-server)
+5. [NFS Volumes for multinodes profile](#nfs-volumes-for-multinodes-profile)
    1. [Quick explanation](#quick-explanation)
 ---
 ## Profiles
@@ -48,6 +49,37 @@ cat /etc/hosts
 # ::1             localhost
 # 127.0.1.1       pop-os.localdomain      pop-os
 ```
+---
+
+## Enable metrics-server
+>To enable the use of metrics in the microservices project for **autoscaling purposes**,
+you need to install the **Metrics Server** addon in your `minikube` cluster.
+
+To enable the **Metrics Server** in your `minikube` cluster, which provides metrics used by the
+**Horizontal Pod Autoscaler** and the **Vertical Pod Autoscaler** 
+(although the latter is not implemented in this project), you can use the following command:
+```bash
+minikube addons enable metrics-server -p [minikube|multinodes]
+```
+By executing this command, the Metrics Server addon will be activated in your Minikube cluster, 
+allowing you to collect and utilize metrics for autoscaling purposes. 
+The Horizontal Pod Autoscaler 
+uses these metrics to adjust the number of replicas for your pods based on resource utilization, 
+while the Vertical Pod Autoscaler, even though not implemented in this project, 
+leverages metrics to optimize resource requests and limits for individual containers within pods. 
+
+For more information on the Vertical Pod Autoscaler, you can refer to the 
+[official GitHub repository](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler#vertical-pod-autoscaler).
+
+---
+## Apply
+To apply the manifest files, use the following command:
+```bash
+kubectl apply -k k8s/overlay/minikube
+```
+
+Before applying the manifest files to `multinodes` profile, you need to configure the NFS Volumes.
+
 ---
 ## NFS Volumes for multinodes profile
 Only for `multinodes` profile, for `minikube` profile the `hostPath` volume is already set in `base`

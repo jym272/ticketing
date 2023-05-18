@@ -48,10 +48,10 @@ The different **environments/overlays** are:
 ---
 ## Microservices
 
-In this microservices project, the communication between services is facilitated by **Nats 
+In this microservices project, the communication between services is facilitated by **NATS 
 Streaming Server**, 
 which provides a messaging system. The **REST APIs** are primarily implemented using **Node.js**, 
-except for the Expiration API, which is written in **Go**.
+except for the _Expiration API_, which is written in **Go**.
 
 The client-side application is developed using the **Next.js** framework, which is a popular choice 
 for building server-rendered React applications.
@@ -61,14 +61,14 @@ To handle networking and routing, a **Nginx Ingress Controller** is utilized. Th
 acts as an entry point for external traffic, manages load balancing, and handles 
 routing requests to the appropriate services within the microservices architecture.
 > ### Rest APIs
-> - [auth-api](https://github.com/jym272/ticketing-auth)
-> - [expiration-api](https://github.com/jym272/ticketing-expiration)
-> - [orders-api](https://github.com/jym272/ticketing-orders)
-> - [payments-api](https://github.com/jym272/ticketing-payments)
-> - [tickets-api](https://github.com/jym272/ticketing-tickets)
+> - #### [auth-api](https://github.com/jym272/ticketing-auth)
+> - #### [expiration-api](https://github.com/jym272/ticketing-expiration)
+> - #### [orders-api](https://github.com/jym272/ticketing-orders)
+> - #### [payments-api](https://github.com/jym272/ticketing-payments)
+> - #### [tickets-api](https://github.com/jym272/ticketing-tickets)
 > ### Common Library
-> Used in all Api's, except `expiration-api`:
-> - [common](https://github.com/jym272/ticketing-common)
+> Used in all APIs, except _Expiration-api_:
+> - #### [common](https://github.com/jym272/ticketing-common)
 > ### Client
 > Frontend or client:
-> - [client](https://github.com/jym272/ticketing-client)
+> - #### [client](https://github.com/jym272/ticketing-client)

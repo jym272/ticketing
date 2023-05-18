@@ -6,13 +6,14 @@
     1. [Installation of the controller with helm charts](#installation-of-the-controller-with-helm-charts)
     2. [Installation of cli kubeseal](#installation-of-cli-kubeseal)
     3. [Creation of secrets](#creation-of-secrets)
-
+---
 ## Urls
 **Minikube** `http` link for adminer, it can expand to other services modifying the 
 `service_names=(adminer)` variable in the script.
 ```shell
 bash scripts/urls.sh
 ```
+---
 
 ## Update Digest
 If a **submodule** has new commits, the digest of the image must be updated.
@@ -22,14 +23,16 @@ The script updates the corresponding digest in the `k8s/base/kustomization.yaml`
 # [auth|expiration|orders|payments|tickets|frontend]
 bash scripts/update-digest.sh <submodule>
 ```
+---
 ## Frontend Logs
 The script `frontend-logs.sh` is principally used in the **skaffold overlay**
 ```shell
 bash scripts/frontend-logs.sh
 ```
+---
 
 ## Using SealedSecrets for secret management
-**IMPORTANT**: The secrets created can only be decrypted by the controller 
+>**IMPORTANT**: The secrets created can only be decrypted by the controller 
 `sealed-secrets-controller` of a particular cluster, thereby, is safe to store such 
 secrets in a public repository and if the cluster is deleted the secrets must be **generated 
 again.**
@@ -57,7 +60,7 @@ brew install kubeseal
 ```
 ### Creation of secrets
 
-If is a known context: **minikube**, **multinodes**, **aws**(_arn:aws:eks:*_), **digitalOcean**
+>If is a **known context**: **minikube**, **multinodes**, **aws**(_arn:aws:eks:*_), **digitalOcean**
 (_do-*_) 
 the file is created in 
 the folder
@@ -68,7 +71,7 @@ The scripts take the arguments:
 - **key=value**: key value pairs of the secret
 
 
-The secrets needed are:
+The _**secrets needed**_ are:
 - **Postgres Secrets**
    ```shell
    bash scripts/create-sealed-secret.sh sealed-secret-postgres POSTGRES_PASSWORD=my_secure_pass POSTGRES_USER=admin

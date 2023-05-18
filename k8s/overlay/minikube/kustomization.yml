@@ -1,6 +1,7 @@
 resources:
   - ../../base/
   - ../../base/adminer
+  - ../../base/hpa
   - ../../base/ingress
   - ../../base/postgres-db/
   - ../../base/storage/
