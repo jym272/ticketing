@@ -16,4 +16,9 @@ sum by (pod) (
     container_cpu_usage_seconds_total{namespace="default",pod=~"auth-.*|orders-.*|tickets-.*|payments-.*|expiration-.*|frontend-.*"}[1m]
   )
 )
+sum by (pod) (
+  rate(
+    container_cpu_usage_seconds_total{namespace="default",pod=~"orders-.*|tickets-.*|nats-.*"}[1m]
+  )
+)
 ```

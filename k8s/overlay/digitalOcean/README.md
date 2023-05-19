@@ -5,8 +5,9 @@
    2. [Install nginx and cert-manager](#install-nginx-and-cert-manager)
    3. [Manage DNS Records](#manage-dns-records)
    4. [Create Sealed Secrets](#create-sealed-secrets)
-   5. [Securing the Ingress Using Cert-Manager](#securing-the-ingress-using-cert-manager)
-   6. [Volumes](#volumes)
+   5. [Install metrics-server](#install-metrics-server)
+   6. [Securing the Ingress Using Cert-Manager](#securing-the-ingress-using-cert-manager)
+   7. [Volumes](#volumes)
 2. [Resources](#resources)
    1. [Create](#create)
    2. [Delete](#delete)
@@ -51,6 +52,16 @@ For secrets management `sealed-secrets` is used.
 Follow the
 [instructions.](../../../scripts/README.md#using-sealedsecrets-for-secret-management)
 
+### Install metrics-server
+You’ll start by adding the `metrics-server` repository to your helm package lists. 
+You can use helm repo add:
+```bash
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server && helm repo update metrics-server
+```
+Install the chart:
+```bash
+helm upgrade --install metrics-server metrics-server/metrics-server --namespace kube-system --set args[0]="--kubelet-insecure-tls=true" --set args[1]="--kubelet-preferred-address-types=InternalIP"
+```
 
 ### Securing the Ingress Using Cert-Manager
 Deploy infrastructure for cert-manager:
@@ -114,16 +125,19 @@ servers to issue a certificate for your domains. In the meantime, you can track 
 by inspecting the output of the following command:
 ```bash
 # The secretName must be different for every Ingress you create.
-# in ingress.yaml -> secretName: hello-kubernetes-tls
-kubectl describe certificate hello-kubernetes-tls
+# in ingress.yaml -> secretName: jym272-online-tls-2
+
+kubectl describe certificate jym272-online-tls-2
+```
+Wait for **The certificate has been successfully issued** message.
+
+If it fails or take more than 10 minutes, review the `domains` and the ingress file, you can change
+the name of `secretName`in ingress.
+```bash
 # inspect the challenges
 kubectl get challenges.acme.cert-manager.io -o wide
 kubectl get certificate
 ```
-
-Wait for **The certificate has been successfully issued** message. 
-If it fails or take more than 10 minutes, review the `domains` and the ingress file, you can change
-the name of `secretName`in ingress.
 
 [More info and troubleshooting](https://cert-manager.io/docs/troubleshooting/acme/),
 

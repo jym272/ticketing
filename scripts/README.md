@@ -62,9 +62,8 @@ brew install kubeseal
 
 >If is a **known context**: **minikube**, **multinodes**, **aws**(_arn:aws:eks:*_), **digitalOcean**
 (_do-*_) 
-the file is created in 
-the folder
-`k8s/overlay/<context>`
+> 
+>The file `sealed-secret-*.yaml` is created in the folder `k8s/overlay/<context>`
 
 The scripts take the arguments:
 - **name**: name of the secret, `secretKeyRef.name`
