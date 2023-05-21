@@ -1,0 +1,13 @@
+services:
+  test_apis:
+    user: ${UID_GID}
+    build:
+      context: ./code
+      dockerfile: Dockerfile
+    volumes:
+      - ${PWD}:/app
+    environment:
+      - BASE_URL=${BASE_URL}
+      - THREADS=${THREADS}
+      - JOBS_PER_THREAD=${JOBS_PER_THREAD}
+

@@ -22,21 +22,33 @@ minikube addons enable ingress -p [multinodes|minikube]
 ```
 Add the `minikube ip -p [multinodes|minikube]` to `/etc/hosts`.
 
-i.e. `192.168.39.128  ticketing.dev`    
+**i.e.** `192.168.39.128  ticketing.dev`    
 
 ### Cookie
-- The cookie is directly relate to the **JWT_SECRET**.
-- The **script** needs a cookie from a **valid user**, generate a cookie with the following command:
-
-```bash
-cd stress-testing/testing_ticket_api
-curl -c cookie -k https://ticketing.dev/api/users/signup -X POST -H "Content-Type: application/json" -d '{"email": "user@gmail.com", "password": "1234567A8a"}'
-```
+The **scripts** needs a _cookie_ from a **valid user**.
+> Use `makefile` to generate the cookie, the **URL** used by default is `https://ticketing.dev`,
+> but you can change it with the environment variable **URL**.
+>```bash
+>make cookie
+>```
+>With a custom url:
+>```bash
+>URL=https://my-url.com make cookie
+>```
 
 ### Execute the script
-```bash
-bash script.sh
-```
+>The default environment variables are:
+>- `URL=https://ticketing.dev`
+>- `THREADS=2`
+>- `JOBS_PER_THREAD=10`
+>```bash
+>make test
+>```
+>With custom environment variables:
+>```bash
+>URL=https://my-url.com THREADS=5 JOBS_PER_THREAD=20 make test
+>```
+
 ---
 
 ## Check the results
