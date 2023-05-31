@@ -1,0 +1,4 @@
+resources:
+  - postgres-configmap-hooks.yaml
+  - tickets-high-availability
+  - orders-high-availability

@@ -1,0 +1,52 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: postgres-tickets-sc
+volumeBindingMode: Immediate
+reclaimPolicy: Delete
+provisioner: kubernetes.io/no-provisioner
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-tickets-pv-a
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: postgres-tickets-sc
+  nfs:
+    server: 192.168.122.1
+    path: /data/postgres-tickets/a
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-tickets-pv-b
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: postgres-tickets-sc
+  nfs:
+    server: 192.168.122.1
+    path: /data/postgres-tickets/b
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-tickets-pv-c
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: postgres-tickets-sc
+  nfs:
+    server: 192.168.122.1
+    path: /data/postgres-tickets/c

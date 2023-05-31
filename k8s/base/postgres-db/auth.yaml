@@ -46,7 +46,7 @@ spec:
               fi
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: auth-claim
+              name: data
       containers:
         - name: db-auth
           image: postgres:15-alpine
@@ -77,9 +77,10 @@ spec:
                 - |
                   user=$(cat /run/secrets/auth-passwd/POSTGRES_USER)
                   psql -U "$user" -d auth -c "SELECT 1"
-            initialDelaySeconds: 3
-            periodSeconds: 5
-            failureThreshold: 2
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
           readinessProbe:
             exec:
               command:
@@ -88,9 +89,10 @@ spec:
                 - |
                   user=$(cat /run/secrets/auth-passwd/POSTGRES_USER)
                   psql -U "$user" -d auth -c "SELECT 1"
-            initialDelaySeconds: 3
-            periodSeconds: 5
-            failureThreshold: 2
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
           startupProbe:
             exec:
               command:
@@ -98,9 +100,10 @@ spec:
                 - -c
                 - |
                   user=$(cat /run/secrets/auth-passwd/POSTGRES_USER)
-                  pg_isready -U "$user"
-            periodSeconds: 1
-            failureThreshold: 30
+                  pg_isready -U "$user" -d "$POSTGRES_DB"
+            periodSeconds: 2
+            failureThreshold: 15
+            successThreshold: 1
           resources:
             requests:
               cpu: 40m
@@ -110,27 +113,24 @@ spec:
               memory: 256Mi
           volumeMounts:
             - mountPath: var/lib/postgresql/data
-              name: auth-claim
+              name: data
             - mountPath: /run/secrets/auth-passwd
               name: secret-volume
               readOnly: true
       volumes:
-        - name: auth-claim
-          persistentVolumeClaim:
-            claimName: postgres-auth-pvc
         - name: secret-volume
           secret:
             secretName: sealed-secret-postgres
             optional: false
-#  volumeClaimTemplates:
-#    - metadata:
-#        name: auth-claim
-#      spec:
-#        accessModes:
-#          - ReadWriteOnce
-#        resources:
-#          requests:
-#            storage: 1Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
 #        storageClassName: postgres-auth-sc
 
 

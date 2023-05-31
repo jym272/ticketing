@@ -54,7 +54,7 @@ spec:
               fi
           volumeMounts:
             - mountPath: /data
-              name: redis-claim
+              name: data
       containers:
         - name: redis
           image: redis:7-alpine
@@ -67,7 +67,7 @@ spec:
             runAsUser: 10001 #someUser
             runAsGroup: 10000 #redis
           volumeMounts:
-            - name: redis-claim
+            - name: data #redis-claim
               mountPath: /data
           # AOF activated, RDB activated, every 15 min if at least 1 key changed,
           # every 5 min if at least 10 keys changed, every 1 min if at least 10000 keys changed
@@ -106,23 +106,23 @@ spec:
             limits:
               cpu: 100m
               memory: 128Mi
-      volumes:
-        - name: redis-claim
-          persistentVolumeClaim:
-            claimName: redis-pvc
+#      volumes:
+#        - name: redis-claim
+#          persistentVolumeClaim:
+#            claimName: redis-pvc
 
 # Note that, the PersistentVolumes associated with the Pods' PersistentVolume Claims are not deleted
 # when the Pods, or StatefulSet are deleted. This must be done manually. -> delete the pvc manually
 # TODO create an script that delete all resources wait 5s and delete the pvc
 # dynamically provision PersistentVolumeClaims (PVCs) for each replica of the StatefulSet.
-#  volumeClaimTemplates:
-#    - metadata:
-#        name: redis-claim
-#      spec:
-#        accessModes:
-#          - ReadWriteOnce
-#        resources:
-#          requests:
-#            storage: 1Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
 #        storageClassName: redis-sc
 

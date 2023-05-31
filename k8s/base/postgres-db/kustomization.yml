@@ -1,5 +1,3 @@
 resources:
   - auth.yaml
-  - orders.yaml
   - payments.yaml
-  - tickets.yaml

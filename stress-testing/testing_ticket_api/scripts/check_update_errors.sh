@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
 set -eou pipefail
-
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PARENT_DIRECTORY="${DIR%/*}"
+source "$(dirname "$0")"/exports.sh
 cd "$PARENT_DIRECTORY"
 
 num_errors=$(awk -F, 'NR > 1 && $1+0 == $1 && $2 != 0 {count += $2} END {print count}' update_errors.test.csv)

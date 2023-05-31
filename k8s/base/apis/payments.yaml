@@ -80,10 +80,10 @@ spec:
             periodSeconds: 1
           resources:
             requests:
-              cpu: 100m
+              cpu: 20m
               memory: 128Mi
             limits:
-              cpu: 500m
+              cpu: 200m
               memory: 256Mi
           env:
             - name: FORCE_COLOR
@@ -92,9 +92,9 @@ spec:
                   name: app-config
                   key: FORCE_COLOR
             - name: NACK_DELAY_MS
-              value: "1000"
+              value: "2000"
             - name: NACK_MAX_RETRIES
-              value: "3"
+              value: "15"
             - name: NATS_SERVER_HOST
               value: nats.default.svc.cluster.local
             - name: NATS_SERVER_PORT

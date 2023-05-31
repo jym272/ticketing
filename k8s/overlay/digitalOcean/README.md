@@ -14,43 +14,46 @@
 ---
 ## Create Infrastructure of Digital Ocean
 ### Create a Cluster
-- Create a cluster- > use the [console](https://cloud.digitalocean.com/login). Default options are fine, only select scale type `Autoscale`.
-- Connect, the context is added in kubectl config
+- Create a cluster- > use the [console](https://cloud.digitalocean.com/login), default options are 
+  fine, only select scale type `Autoscale`.
+- The **context** is added in `kubectl` config with the command:
     ```bash
   doctl kubernetes cluster kubeconfig save e53a7675-fc4c-48de-ac38-a3e99adbfXXX
    ```
 ### Install nginx and cert-manager
-Follow the [tutorial](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm).
+_Based on [walkthrough](https://www.digitalocean.com/community/tutorials/how-to-set-up-an-nginx-ingress-on-digitalocean-kubernetes-using-helm)_
 
-To install the Nginx Ingress Controller to your cluster, you’ll first need to add its repository to Helm by running:
+
+
+To install the **Nginx Ingress Controller** to your cluster, you’ll first need to add its 
+repository to Helm by running:
 ```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
 ```
-Update your system to let Helm know what it contains:
-```bash
-helm repo update
-```
-Finally, run the following command to install the Nginx ingress:
+Run the following command to install the **Nginx Ingress**:
 ```bash
 helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true
 ```
-Run this command to watch the Load Balancer become available, `EXTERNAL-IP` must appear:
+Run this command to watch the **Load Balancer** become available, `EXTERNAL-IP` must appear:
 ```bash
 kubectl --namespace default get services -o wide -w nginx-ingress-ingress-nginx-controller
 ```
 ### Manage DNS Records
-Add a domain in `Networking` tab in Digital Ocean console, then, direct the hostname to the lb.
+Add a **domain** in the `Networking` tab in Digital Ocean console, then, route the **hostname** to 
+the lb.
+
 ![image info](./.assets/manage_dns_records_root.png)
 
-Create some subdomains.
+Create some **subdomains**.
+
 ![image info](./.assets/manage_dns_records_subdomain.png)
 
-Wait for the subdomains to be available. [check propagation of domains](https://www.whatsmydns.net/#CNAME/)
+Wait for the **subdomains** to be available. [Check propagation of domains](https://www.whatsmydns.net/#CNAME/)
 
 ### Create Sealed Secrets
 For secrets management `sealed-secrets` is used.
 Follow the
-[instructions.](../../../scripts/README.md#using-sealedsecrets-for-secret-management)
+**[instructions.](../../../scripts/README.md#using-sealedsecrets-for-secret-management)**
 
 ### Install metrics-server
 You’ll start by adding the `metrics-server` repository to your helm package lists. 
@@ -60,11 +63,11 @@ helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server &&
 ```
 Install the chart:
 ```bash
-helm upgrade --install metrics-server metrics-server/metrics-server --namespace kube-system --set args[0]="--kubelet-insecure-tls=true" --set args[1]="--kubelet-preferred-address-types=InternalIP"
+helm upgrade --install metrics-server metrics-server/metrics-server --namespace kube-system
 ```
 
 ### Securing the Ingress Using Cert-Manager
-Deploy infrastructure for cert-manager:
+First, deploy the infrastructure for **cert-manager**:
 ```bash
 kubectl apply -k k8s/overlay/digitalOcean/
 ```  

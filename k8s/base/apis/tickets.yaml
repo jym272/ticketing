@@ -36,7 +36,7 @@ spec:
             [
               "sh",
               "-c",
-              "until nc -vz db-tickets.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local 5432; do echo waiting for db tickets; sleep 2; done",
+              "until nc -vz pgpool-tickets-svc.$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace).svc.cluster.local 5432; do echo waiting for pgpool-tickets; sleep 2; done",
             ]
         - name: wait-for-nats
           imagePullPolicy: IfNotPresent
@@ -92,9 +92,9 @@ spec:
                   name: app-config
                   key: FORCE_COLOR
             - name: NACK_DELAY_MS
-              value: "1000"
+              value: "2000"
             - name: NACK_MAX_RETRIES
-              value: "3"
+              value: "15"
             - name: NATS_SERVER_HOST
               value: nats.default.svc.cluster.local
             - name: NATS_SERVER_PORT
@@ -103,6 +103,8 @@ spec:
               value: "3051"
             - name: POSTGRES_DB
               value: tickets
+            - name: POSTGRES_USER
+              value: "postgres"
             - name: POSTGRES_HOST
               valueFrom:
                 configMapKeyRef:
@@ -119,12 +121,10 @@ spec:
           projected:
             sources:
               - secret:
-                  name: sealed-secret-postgres
+                  name: sealed-secret-postgres-ha
                   items:
-                    - key: POSTGRES_PASSWORD
+                    - key: POSTGRESQL_PASSWORD
                       path: POSTGRES_PASSWORD
-                    - key: POSTGRES_USER
-                      path: POSTGRES_USER
               - secret:
                   name: sealed-secret-auth
                   items:

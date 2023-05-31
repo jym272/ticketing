@@ -80,11 +80,11 @@ spec:
             periodSeconds: 1
           resources:
             requests:
+              cpu: 10m
+              memory: 64Mi
+            limits:
               cpu: 100m
               memory: 128Mi
-            limits:
-              cpu: 500m
-              memory: 256Mi
           env:
             - name: FORCE_COLOR
               valueFrom:

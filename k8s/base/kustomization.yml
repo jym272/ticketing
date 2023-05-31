@@ -10,9 +10,9 @@ configMapGenerator:
   - name: postgres-host
     literals:
       - POSTGRES_HOST_AUTH=db-auth.default.svc.cluster.local
-      - POSTGRES_HOST_ORDERS=db-orders.default.svc.cluster.local
+      - POSTGRES_HOST_ORDERS=pgpool-orders-svc.default.svc.cluster.local
       - POSTGRES_HOST_PAYMENTS=db-payments.default.svc.cluster.local
-      - POSTGRES_HOST_TICKETS=db-tickets.default.svc.cluster.local
+      - POSTGRES_HOST_TICKETS=pgpool-tickets-svc.default.svc.cluster.local
 # For updating the digest use the script:
 # bash scripts/update_to_latest_digest [auth|expiration|orders|payments|tickets|frontend]
 images:
@@ -23,8 +23,8 @@ images:
   - name: jym272/ticketing-frontend
     digest: sha256:91bdc568409571b88fbfbf6ae065bda748544576762d562e18e843972f1c8f6a
   - name: jym272/ticketing-orders-api
-    digest: sha256:f85cb9bbe4f2dd953a393c82296470e96e130a6e5a00b38adef4d6d8fdcf2d89
+    digest: sha256:0057639cfe46f3d04d7b64fab5e1a11947ce91405b44e1f5cd8e6498cbf07336
   - name: jym272/ticketing-tickets-api
-    digest: sha256:e68dac47c27659a82339925c2420dd9efe7fdbce6363cc2fd3a66b5cf68f4db2
+    digest: sha256:cf700ce399c118e2cc8d281639069cb8232e4f81cda36843bce9c2d1fbcc152e
   - name: jym272/ticketing-payments-api
     digest: sha256:e12c7b0b353715abae827538b453c45347e951f6c55d5d731a9cb1aef3c88ad0

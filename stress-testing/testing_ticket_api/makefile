@@ -32,6 +32,11 @@ cookie:
 	@bash scripts/get_cookie.sh
 .PHONY: cookie
 
+
+test: there-is-a-cookie
+	@bash scripts/run_test.sh
+.PHONY: test
+
 check_errors_create: there-is-create_errors
 	@bash scripts/check_create_errors.sh
 .PHONY: check_errors_create
@@ -40,9 +45,18 @@ check_errors_update: there-is-update_errors
 	@bash scripts/check_update_errors.sh
 .PHONY: check_errors_update
 
-test: there-is-a-cookie
-	@bash scripts/run_test.sh
-.PHONY: test
+results:
+	@bash scripts/results.sh
+.PHONY: results
+
+get_results:
+	@bash scripts/get_results.sh
+.PHONY: get_results
+
+delete_db:
+	@bash scripts/delete_db.sh
+.PHONY: delete_db
+
 
 clean:
 	@rm -f *.test.csv

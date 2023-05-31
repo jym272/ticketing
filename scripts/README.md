@@ -75,6 +75,10 @@ The _**secrets needed**_ are:
    ```shell
    bash scripts/create-sealed-secret.sh sealed-secret-postgres POSTGRES_PASSWORD=my_secure_pass POSTGRES_USER=admin
    ```
+- **Postgres Secrets High Availability**
+   ```shell
+   bash scripts/create-sealed-secret.sh sealed-secret-postgres-ha POSTGRESQL_PASSWORD=my_secure_pass REPMGR_PASSWORD=my_secure_pass PGPOOL_ADMIN_PASSWORD=my_secure_pass
+   ```
 - **Stripe secrets**
    ```shell
    bash scripts/create-sealed-secret.sh sealed-secret-stripe STRIPE_SECRET_KEY=sk_test_D23d STRIPE_PUBLISHABLE_KEY=pk_test_51Kqwdqwd

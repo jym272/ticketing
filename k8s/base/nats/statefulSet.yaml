@@ -49,7 +49,7 @@ spec:
               fi
           volumeMounts:
             - mountPath: /data
-              name: nats-claim
+              name: data
       containers:
         - name: nats
           image: nats:2-alpine
@@ -70,7 +70,7 @@ spec:
             - "8222"
           volumeMounts:
             - mountPath: /data
-              name: nats-claim
+              name: data
           readinessProbe:
             httpGet:
               path: /healthz?js-enabled-only=true
@@ -92,19 +92,15 @@ spec:
             limits:
               cpu: 300m
               memory: 256Mi
-      volumes:
-        - name: nats-claim
-          persistentVolumeClaim:
-            claimName: jetstream-pvc
-#  volumeClaimTemplates:
-#    - metadata:
-#        name: nats-claim
-#      spec:
-#        accessModes:
-#          - ReadWriteOnce
-#        resources:
-#          requests:
-#            storage: 1Gi
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
 #        storageClassName: jetstream-sc
 
 

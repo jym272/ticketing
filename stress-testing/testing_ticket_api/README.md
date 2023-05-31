@@ -31,9 +31,14 @@ The **scripts** needs a _cookie_ from a **valid user**.
 >```bash
 >make cookie
 >```
->With a custom url:
+>With a **custom url**:
 >```bash
 >URL=https://my-url.com make cookie
+>```
+>You can also `export` the **URL** and run the command without the **URL** argument:
+>```bash
+>export URL=https://my-url.com 
+>make cookie
 >```
 
 ### Execute the script

@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
 set -eou pipefail
-
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PARENT_DIRECTORY="${DIR%/*}"
+source "$(dirname "$0")"/exports.sh
 cd "$PARENT_DIRECTORY"
 
 URL="${URL:-https://ticketing.dev}"

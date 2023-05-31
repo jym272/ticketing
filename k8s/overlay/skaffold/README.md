@@ -19,6 +19,8 @@ manifests in the `k8s/overlay/skaffold` directory.
 **Skaffold** doesn't support multiple nodes, the profile `minikube` can be used to develop 
 locally with skaffold.
 
+The horizontal pod autoscaler is disabled in the `k8s/overlay/skaffold/kustomization.yaml` file.
+
 Once the local cluster is initialized, the development environment can be initialized with:
 ```bash
 skaffold dev --profile local

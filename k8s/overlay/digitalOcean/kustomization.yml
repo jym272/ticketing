@@ -2,118 +2,50 @@ resources:
   - ../../base/
   - ../../base/hpa
   - ../../base/postgres-db
-  - sealedSecrets/sealed-secret-postgres.yaml
-  - sealedSecrets/sealed-secret-stripe.yaml
-  - sealedSecrets/sealed-secret-auth.yaml
+  - ../../base/postgres-db-ha/
+  - sealedSecrets
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 patches:
 - patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes/0
     - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: auth-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: do-block-storage
+      path: /spec/volumeClaimTemplates/0/spec/storageClassName
+      value: do-block-storage
   target:
     name: db-auth
     kind: StatefulSet
 - patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes/0
     - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: orders-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: do-block-storage
+      path: /spec/volumeClaimTemplates/0/spec/storageClassName
+      value: do-block-storage
   target:
-    name: db-orders
+    name: postgres-sts-orders
     kind: StatefulSet
 - patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes/0
     - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: payments-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: do-block-storage
+      path: /spec/volumeClaimTemplates/0/spec/storageClassName
+      value: do-block-storage
   target:
     name: db-payments
     kind: StatefulSet
 - patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes/0
     - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: tickets-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: do-block-storage
+      path: /spec/volumeClaimTemplates/0/spec/storageClassName
+      value: do-block-storage
   target:
-    name: db-tickets
+    name: postgres-sts-tickets
     kind: StatefulSet
-  # take out the volumeMounts from redis and nats, add block storage
 - patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes
     - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: redis-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: do-block-storage
+      path: /spec/volumeClaimTemplates/0/spec/storageClassName
+      value: do-block-storage
   target:
     name: redis
     kind: StatefulSet
 - patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes
     - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: nats-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: do-block-storage
+      path: /spec/volumeClaimTemplates/0/spec/storageClassName
+      value: do-block-storage
   target:
     name: nats
     kind: StatefulSet

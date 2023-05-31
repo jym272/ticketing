@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -eou pipefail
 # Create NFS exports for the NFS server
 declare -a dirs=("/data/postgres-orders" "/data/postgres-auth" "/data/redis" "/data/jetstream" "/data/postgres-payments" "/data/postgres-tickets")
 
@@ -15,6 +16,11 @@ do
   if [ ! -d "$dir" ]; then
     green_echo "Creating $dir"
     sudo mkdir -p "$dir"
+    # if dir is "/data/postgres-orders" or "/data/postgres-tickets" also create the subdirs a,b,c
+    if [ "$dir" == "/data/postgres-orders" ] || [ "$dir" == "/data/postgres-tickets" ]; then
+      green_echo "Creating subdirs a,b,c for $dir"
+      sudo mkdir -p "$dir"/{a,b,c}
+    fi
     sudo chown -R nobody:nogroup "$dir"
     green_echo "Creating NFS export for $dir"
     export_line="$dir *(rw,sync,no_subtree_check,no_root_squash,insecure)"

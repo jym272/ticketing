@@ -4,8 +4,14 @@
 2. [Create Sealed Secrets](#create-sealed-secrets)
 3. [Enable ingress](#enable-ingress)
 4. [Enable metrics-server](#enable-metrics-server)
-5. [NFS Volumes for multinodes profile](#nfs-volumes-for-multinodes-profile)
+5. [Apply](#apply)
+   1. [Minikube](#minikube)
+   2. [Multinodes](#multinodes)
+6. [NFS Volumes for multinodes profile](#nfs-volumes-for-multinodes-profile)
    1. [Quick explanation](#quick-explanation)
+7. [Delete](#delete)
+    1. [Minikube](#minikube)
+    2. [Multinodes](#multinodes)
 ---
 ## Profiles
 Two profiles are available, `minikube` and `multinodes`.
@@ -13,13 +19,13 @@ Two profiles are available, `minikube` and `multinodes`.
 > **Minikube** profile uses one node, a volume `hostPath` is attached to the minikube node. If this 
   minikube profile is erased, the data is lost. Start the profile with:
    > ```bash
-   > minikube start --cpus=max --memory 8192 -p minikube --driver kvm2
+   > minikube start --cpus=max --memory 12288 -p minikube --driver kvm2
    > ```
 
 > **Multinodes** uses `nfs`, the data is storage in the host machine, if the minikube profile 
 `multinodes` is erased, the data is not lost. Start the profile with:
    > ```bash
-   > minikube start --nodes 4 --cpus 3 --memory 2048 -p multinodes --driver kvm2
+   > minikube start --nodes 4 --cpus 3 --memory 4096 -p multinodes --driver kvm2
    > ```
 ---
 
@@ -73,20 +79,25 @@ For more information on the Vertical Pod Autoscaler, you can refer to the
 
 ---
 ## Apply
+### Minikube
 To apply the manifest files, use the following command:
 ```bash
 kubectl apply -k k8s/overlay/minikube
 ```
-
-Before applying the manifest files to `multinodes` profile, you need to configure the NFS Volumes.
-
+### Multinodes
+Before applying the manifest files to `multinodes` profile, you need to configure first the 
+**NFS Volumes**, then to apply the manifest files, use the following command:
+```bash
+kubectl apply -k k8s/overlay/multinodes/storage
+kubectl apply -k k8s/overlay/multinodes
+```
 ---
 ## NFS Volumes for multinodes profile
 Only for `multinodes` profile, for `minikube` profile the `hostPath` volume is already set in `base`
 
 To configure NFS Volumes use the scripts: 
 - [change_nfs_server_address.sh](../multinodes/change_nfs_server_address.sh)
-  > The script updates the value of  `nfs.server` in the `overlay/multinodes` kustomization 
+  > The script updates the value of  `nfs.server` in the `overlay/multinodes/storage` kustomization 
   > file. The value is the  `minikube_gateway_address`.
 - [create_nfs_exports.sh](../multinodes/create_nfs_exports.sh)
   > This script creates directories for the volumes, assigns ownership to them, and sets up NFS 
@@ -169,4 +180,32 @@ spec:
       storage: 1Gi
 
 ```
+---
+## Delete
+### Minikube
+To delete the manifest files, use the following command:
+```bash
+kubectl delete -k k8s/overlay/minikube
+```
+### Multinodes
+To delete the manifest files, use the following command:
+
+```bash
+kubectl delete -k k8s/overlay/multinodes
+```
+The creation of the NFS Volumes is not deleted because it was dynamically created by the **StatefulSet**.
+First, delete the **PVCs** that was created dynamically by the **StatefulSet**.
+```bash
+kubectl delete pvc --all
+```
+Then, delete the NFS Volumes
+```bash
+kubectl delete -k k8s/overlay/multinodes/storage
+```
+If the manifest are going to be applied again, the NFS directories need to be reset.
+```bash
+sudo rm -rf /data/*
+bash multinodes/create_nfs_exports.sh
+```
+
 [Reference]:https://stackoverflow.com/questions/70878064/mounting-volume-for-two-nodes-in-minikube

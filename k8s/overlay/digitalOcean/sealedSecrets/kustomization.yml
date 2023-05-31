@@ -1,0 +1,5 @@
+resources:
+  - sealed-secret-postgres.yaml
+  - sealed-secret-stripe.yaml
+  - sealed-secret-auth.yaml
+  - sealed-secret-postgres-ha.yaml

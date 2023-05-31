@@ -1,0 +1,86 @@
+resources:
+  - postgres
+  - nats.yaml
+  - redis.yaml
+patches:
+  # ---------------- Patch  NFS Server --------------
+  # nats
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: jetstream-pv
+      kind: PersistentVolume
+  # redis
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: redis-pv
+      kind: PersistentVolume
+  # postgres-auth
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: postgres-auth-pv
+      kind: PersistentVolume
+  # postgres-orders-a
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: postgres-orders-pv-a
+      kind: PersistentVolume
+  # postgres-orders-b
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: postgres-orders-pv-b
+      kind: PersistentVolume
+  # postgres-orders-c
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: postgres-orders-pv-c
+      kind: PersistentVolume
+  # postgres-tickets-a
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: postgres-tickets-pv-a
+      kind: PersistentVolume
+  # postgres-tickets-b
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: postgres-tickets-pv-b
+      kind: PersistentVolume
+  # postgres-tickets-c
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: postgres-tickets-pv-c
+      kind: PersistentVolume
+  # postgres-payments
+  - patch: |-
+      - op: replace
+        path: /spec/nfs/server
+        value: 192.168.122.1
+    target:
+      name: postgres-payments-pv
+      kind: PersistentVolume

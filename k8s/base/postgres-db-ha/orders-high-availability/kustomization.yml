@@ -1,0 +1,6 @@
+resources:
+  - pgpool/pgpool-deployment.yaml
+  - pgpool/pgpool-svc.yaml
+  - postgresql/postgres-headless-svc.yaml
+  - postgresql/postgres-statefulset.yaml
+
