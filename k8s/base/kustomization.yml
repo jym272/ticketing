@@ -13,7 +13,7 @@ configMapGenerator:
       - POSTGRES_HOST_ORDERS=pgpool-orders-svc.default.svc.cluster.local
       - POSTGRES_HOST_PAYMENTS=db-payments.default.svc.cluster.local
       - POSTGRES_HOST_TICKETS=pgpool-tickets-svc.default.svc.cluster.local
-# For updating the digest use the script  :
+# For updating the digest use the script:
 # bash scripts/update_to_latest_digest [auth|expiration|orders|payments|tickets|frontend]
 images:
   - name: jym272/ticketing-auth-api
