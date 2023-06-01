@@ -1,19 +1,18 @@
 ## Testing Tickets API and Orders API
 
 **Contents**
-1. [Init](#init)
-   1. [Ingress](#ingress)
-   2. [Cookie](#cookie)
-   3. [Execute the script](#execute-the-script)
-2. [Check the results](#check-the-results)
-   1. [Errors](#errors)
-   2. [Clean](#clean)
+1. [Ingress](#ingress)
+2. [Cookie](#cookie)
+3. [Delete databases](#delete-databases)
+4. [Execute the script](#execute-the-script)
+5. [Check the results](#check-the-results)
+6. [Clean](#clean)
 ---
 
-- The goal of the script is to test the performance and correctness of the APIs.
+- The goal of the script is to test the performance and correctness of the APIs, and how they 
+  behave under heavy load.
 - The Order Service listens to the `events` **create** and **update** Ticket.
 ---
-## Init
 ### Ingress
 Make sure that the ingress service is enabled and correctly configured.
 
@@ -41,6 +40,14 @@ The **scripts** needs a _cookie_ from a **valid user**.
 >make cookie
 >```
 
+### Delete databases
+Prepare the databases por testing environments, to delete the _Ticket Table_ from 
+**Orders API** and **Tickets API**:
+```bash
+make delete_db
+```
+
+
 ### Execute the script
 >The default environment variables are:
 >- `URL=https://ticketing.dev`
@@ -56,42 +63,24 @@ The **scripts** needs a _cookie_ from a **valid user**.
 
 ---
 
-## Check the results
+### Check the results
+Once the test has finished, two files are created, `create_errors.test.csv` and 
+`update_errors.test.csv`, the errors correspond to the creation and update of the tickets in the 
+**Tickets API**, to analyze the results of these files, you can use the following commands:
 ```bash
-db_tickets=$(kubectl get pods -l db=tickets -o jsonpath="{.items[0].metadata.name}")
-db_orders=$(kubectl get pods -l db=orders -o jsonpath="{.items[0].metadata.name}")
-kubectl exec -it "$db_tickets" -- psql -U jorge -d tickets -t -c 'SELECT COUNT(*) FROM "ticket" WHERE "version" = 3;' -q
-    #1000
-kubectl exec -it "$db_tickets" -- psql -U jorge -d tickets -t -c 'SELECT COUNT(*) FROM "ticket" WHERE "version" <> 3;' -q
-    #0
-kubectl exec -it "$db_orders" -- psql -U jorge -d orders -t -c 'SELECT COUNT(*) FROM "ticket" WHERE "version" = 3;' -q
-    #1000
-kubectl exec -it "$db_orders" -- psql -U jorge -d orders -t -c 'SELECT COUNT(*) FROM "ticket" WHERE "version" <> 3;' -q
-    #0
+make check_errors_create
+make check_errors_update
+``` 
+If no **API** _errors_ are found, you can also check the `results` of the versioning of the tickets 
+in the **APIs**, all versions must be version **3** in the _Ticket Table_ in the **Orders API** and in 
+the **Tickets API**.
+```bash
+make results
+make get_results
 ``` 
 
-### Errors
-
-The `create_errors.test.csv` is created, if any creation of a ticket results in an error, the 
-iteration number is added to the file.
-
-The `update_errors.test.csv` is created, it has two columns, the ticketId and the number of 
-errors if the update fails.
-
-
-```bash
-# Get the error count
-sort update_errors.test.csv | awk -F '[,]' '{print $2}' | uniq -c
-  # 1000 0 -> 1000 tickets updated without errors
-```
-
 ### Clean
-
-Clean the db's before and after run the test:
+Delete the files related to the test.
 ```bash
-db_tickets=$(kubectl get pods -l db=tickets -o jsonpath="{.items[0].metadata.name}")
-db_orders=$(kubectl get pods -l db=orders -o jsonpath="{.items[0].metadata.name}")
-
-kubectl exec -it "$db_tickets" -- psql -U jorge -d tickets -t -c 'DELETE FROM "ticket";' -q
-kubectl exec -it "$db_orders" -- psql -U jorge -d orders -t -c 'DELETE FROM "ticket";' -q
+make clean
 ```

@@ -60,4 +60,5 @@ delete_db:
 
 clean:
 	@rm -f *.test.csv
+	@rm -f orders-db_ticket-table.txt tickets-db_ticket-table.txt
 .PHONY: clean
