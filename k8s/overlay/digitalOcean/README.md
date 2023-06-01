@@ -162,16 +162,15 @@ kubectl apply -k k8s/overlay/digitalOcean/
 kubectll apply -f k8s/overlay/digitalOcean/ingress.yaml
 ```
 ### Delete
-- **Volumes** are created, these need to be deleted manually.
-- When `nginx` is created a `LoadBalancer` is created, this needs to be deleted manually also.
 ```bash
 kubectl delete -k k8s/overlay/digitalOcean/
 kubectl delete -f k8s/overlay/digitalOcean/ingress.yaml
 ```
-The `pvc` are dynamically created by StatefulSet, so you need to delete them manually.
-The volumes are deleted if the storage class used has the `RECLAIMPOLICY` set to `Delete`
+
+The `PVCs` are dynamically created by **StatefulSet**, so you need to delete them manually.
+The **Volumes** are deleted if the storage class used has the `RECLAIMPOLICY` set to `Delete`
 ```bash
-kubectl delete pvc auth-claim-db-auth-0 nats-claim-nats-0 orders-claim-db-orders-0 payments-claim-db-payments-0 tickets-claim-db-tickets-0 redis-claim-redis-0
+kubectl delete pvc --all
 ```
 Delete the `LoadBalancer` created by `nginx-ingress`:
 ```bash

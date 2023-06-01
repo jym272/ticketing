@@ -5,8 +5,9 @@
    2. [Install nginx and cert-manager](#install-nginx-and-cert-manager)
    3. [Manage DNS Records](#manage-dns-records)
    4. [Create Sealed Secrets](#create-sealed-secrets)
-   5. [Securing the Ingress Using Cert-Manager](#securing-the-ingress-using-cert-manager)
-   6. [Volumes](#volumes)
+   5. [Install metrics-server](#install-metrics-server)
+   6. [Securing the Ingress Using Cert-Manager](#securing-the-ingress-using-cert-manager)
+   7. [Volumes](#volumes)
 2. [Resources](#resources)
    1. [Create](#create)
    2. [Delete](#delete)
@@ -16,6 +17,7 @@
 ### Create cluster
 The infrastructure is created using terraform, the cluster is created using the module `terraform-aws-eks`.
 ```bash
+cd k8s/overlay/aws/infra/terraform
 terraform get 
 terraform init
 terraform plan
@@ -31,17 +33,13 @@ aws eks --region $(terraform output -raw region) update-kubeconfig --name $(terr
 To install the Nginx Ingress Controller to your cluster,
 you'll first need to add its repository to Helm by running:
 ```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && helm repo update
 ```
-Update your system to let Helm know what it contains:
-```bash
-helm repo update
-```
-Finally, run the following command to install the Nginx ingress:
+Run the following command to install the Nginx ingress:
 ```bash
 helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true
 ```
-Run this command to watch the Load Balancer become available, `EXTERNAL-IP` must appear:
+Run this command to watch the **Load Balancer** become available, `EXTERNAL-IP` must appear:
 ```bash
 kubectl --namespace default get services -o wide -w nginx-ingress-ingress-nginx-controller
 ```
@@ -62,14 +60,25 @@ For secrets management `sealed-secrets` is used.
 Follow the
 [instructions.](../../../scripts/README.md#using-sealedsecrets-for-secret-management)
 
+### Install metrics-server
+You’ll start by adding the `metrics-server` repository to your helm package lists.
+You can use helm repo add:
+```bash
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server && helm repo update metrics-server
+```
+Install the chart:
+```bash
+helm upgrade --install metrics-server metrics-server/metrics-server --namespace kube-system
+```
+
 ### Securing the Ingress Using Cert-Manager
-Deploy infrastructure first:
+First, deploy the infrastructure:
 ```bash
 kubectl apply -k k8s/overlay/aws/
 ```  
 Comment the line `cert-manager.io/cluster-issuer: letsencrypt-prod` in `ingress.yaml` and apply it.
 ```bash
-kubectll apply -f k8s/overlay/aws/ingress.yaml
+kubectl apply -f k8s/overlay/aws/ingress.yaml
 ```
 
 [Cert Manager nginx doc](https://cert-manager.io/docs/tutorials/acme/nginx-ingress/)
@@ -152,24 +161,30 @@ certificate.
 kubectll apply -f k8s/overlay/aws/ingress.yaml
 ```
 ### Delete
-**EBS Volumes** are created by the **StatefulSet**, these needs to be deleted manually.
 
 ```bash
 kubectl delete -k k8s/overlay/aws/
 kubectl delete -f k8s/overlay/aws/ingress.yaml
 ```
-The `PVC's` are dynamically created by **StatefulSet**. Delete them manually
+
+**EBS Volumes** - `PVC's` are created by the **StatefulSet**, these needs to be deleted manually.
 ```bash
-kubectl delete pvc auth-claim-db-auth-0 nats-claim-nats-0 orders-claim-db-orders-0 payments-claim-db-payments-0 tickets-claim-db-tickets-0 redis-claim-redis-0
+kubectl delete pvc --all
 ```
 If the `reclaimPolicy: Retain`policy is used in the **storage class**, the **PV's** are not 
 deleted, 
 you need to delete them manually also, otherwise the **EBS Volumes** are not deleted, even if 
 the infrastructure is deleted with terraform destroy.
 ```bash
-kubectl delete pv $(kubectl get pv | grep Released | awk '{print $1}')
+kubectl delete pv --all
 ```
 When `nginx` is created a `LoadBalancer` is created, this also needs to be deleted manually.
 ```bash
 helm uninstall nginx-ingress
 ```
+Finally, you can destroy the infrastructure with terraform.
+```bash
+cd k8s/overlay/aws/infra/terraform
+terraform destroy -auto-approve
+```
+Destroy manually the **EBS Volumes** in the AWS console.

@@ -276,7 +276,7 @@ module "eks" {
         role = "general"
       }
 
-      instance_types = ["t3.small"]
+      instance_types = ["t3.large"]
       capacity_type  = "ON_DEMAND"
 
       create_iam_role          = true

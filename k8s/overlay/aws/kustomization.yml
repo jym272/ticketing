@@ -1,270 +1,205 @@
-resources:
-- ../../base/
-- ../../base/postgres-db
-- sc-gp3.yaml
-
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+resources:
+  - ../../base/
+  - ../../base/hpa
+  - ../../base/postgres-db
+  - ../../base/postgres-db-ha/
+  - sealedSecrets
+  - sc-gp3.yaml
 patches:
-- patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes
-    - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: auth-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: gp3
-  target:
-    name: db-auth
-    kind: StatefulSet
-- patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes
-    - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: orders-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: gp3
-  target:
-    name: db-orders
-    kind: StatefulSet
-- patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes
-    - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: payments-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: gp3
-  target:
-    name: db-payments
-    kind: StatefulSet
-- patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes
-    - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: tickets-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: gp3
-  target:
-    name: db-tickets
-    kind: StatefulSet
-  # take out the volumeMounts from redis and nats, add block storage
-- patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes
-    - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: redis-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: gp3
-  target:
-    name: redis
-    kind: StatefulSet
-- patch: |-
-    - op: remove
-      path: /spec/template/spec/volumes
-    - op: add
-      path: /spec/volumeClaimTemplates
-      value:
-        - metadata:
-            name: nats-claim
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 1Gi
-            storageClassName: gp3
-  target:
-    name: nats
-    kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: gp3
+    target:
+      name: db-auth
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: gp3
+    target:
+      name: postgres-sts-orders
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: gp3
+    target:
+      name: db-payments
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: gp3
+    target:
+      name: postgres-sts-tickets
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: gp3
+    target:
+      name: redis
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/volumeClaimTemplates/0/spec/storageClassName
+        value: gp3
+    target:
+      name: nats
+      kind: StatefulSet
 # set INGRESS_NS and INGRESS_SVC env vars for frontend
-- patch: |-
-    - op: replace
-      path: /spec/template/spec/containers/0/env/0/value
-      value: default
-    - op: replace
-      path: /spec/template/spec/containers/0/env/1/value
-      value: nginx-ingress-ingress-nginx-controller
-  target:
-    kind: Deployment
-    name: frontend
-# Keep in mind that the underlying EBS volume of a PV is bound to an AZ. If you want to stop and restart the pod later on,
-# make sure to add nodeSelector or nodeAffinity to the YAML specification to run the pod on a node that is part of the same AZ as the EBS volume.
-# 3 nodes -> 3 AZs
-# ----------------------------- Patch node name ----------------------------------
-# https://kubernetes.io/docs/reference/labels-annotations-taints/#topologykubernetesiozone
-# grouping StatefulSet to az
-# nats, redis -> sa-east-1a
-# auth, payments -> sa-east-1b
-# tickets, orders -> sa-east-1c
-- patch: |-
-    - op: add
-      path: /spec/template/spec/affinity
-      value: 
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: topology.kubernetes.io/zone
-                    operator: In
-                    values:
-                      - sa-east-1a
-  target:
-    name: redis
-    kind: StatefulSet
-- patch: |-
-    - op: add
-      path: /spec/template/spec/affinity
-      value:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: topology.kubernetes.io/zone
-                    operator: In
-                    values:
-                      - sa-east-1a
-  target:
-    name: nats
-    kind: StatefulSet
-- patch: |-
-    - op: add
-      path: /spec/template/spec/affinity
-      value:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: topology.kubernetes.io/zone
-                    operator: In
-                    values:
-                      - sa-east-1b
-  target:
-    name: db-auth
-    kind: StatefulSet
-- patch: |-
-    - op: add
-      path: /spec/template/spec/affinity
-      value:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: topology.kubernetes.io/zone
-                    operator: In
-                    values:
-                      - sa-east-1b
-  target:
-    name: db-payments
-    kind: StatefulSet
-- patch: |-
-    - op: add
-      path: /spec/template/spec/affinity
-      value:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: topology.kubernetes.io/zone
-                    operator: In
-                    values:
-                      - sa-east-1c
-  target:
-    name: db-orders
-    kind: StatefulSet
-- patch: |-
-    - op: add
-      path: /spec/template/spec/affinity
-      value:
-        nodeAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            nodeSelectorTerms:
-              - matchExpressions:
-                  - key: topology.kubernetes.io/zone
-                    operator: In
-                    values:
-                      - sa-east-1c
-  target:
-    name: db-tickets
-    kind: StatefulSet
-# -----------------------------  Setting env in Deployments -----------------------------
-- patch: |-
-    - op: replace
-      path: /metadata/labels/env
-      value: stage
-  target:
-    kind: Deployment
-    name: expiration-api
-- patch: |-
-    - op: replace
-      path: /metadata/labels/env
-      value: stage
-  target:
-    kind: Deployment
-    name: auth-api
-- patch: |-
-    - op: replace
-      path: /metadata/labels/env
-      value: stage
-  target:
-    kind: Deployment
-    name: orders-api
-- patch: |-
-    - op: replace
-      path: /metadata/labels/env
-      value: stage
-  target:
-    kind: Deployment
-    name: tickets-api
-- patch: |-
-    - op: replace
-      path: /metadata/labels/env
-      value: stage
-  target:
-    kind: Deployment
-    name: payments-api
-- patch: |-
-    - op: replace
-      path: /metadata/labels/env
-      value: stage
-  target:
-    kind: Deployment
-    name: frontend
+  - patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/env/0/value
+        value: default
+      - op: replace
+        path: /spec/template/spec/containers/0/env/1/value
+        value: nginx-ingress-ingress-nginx-controller
+    target:
+      kind: Deployment
+      name: frontend
+  # Keep in mind that the underlying EBS volume of a PV is bound to an AZ. If you want to stop and restart the pod later on,
+  # make sure to add nodeSelector or nodeAffinity to the YAML specification to run the pod on a node that is part of the same AZ as the EBS volume.
+  # 3 nodes -> 3 AZs
+  # ----------------------------- Patch node name ----------------------------------
+  # https://kubernetes.io/docs/reference/labels-annotations-taints/#topologykubernetesiozone
+  # grouping StatefulSet to az
+  # nats, redis -> sa-east-1a
+  # auth, payments -> sa-east-1b
+  # tickets, orders -> sa-east-1c
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/affinity
+        value: 
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: topology.kubernetes.io/zone
+                      operator: In
+                      values:
+                        - sa-east-1a
+    target:
+      name: redis
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: topology.kubernetes.io/zone
+                      operator: In
+                      values:
+                        - sa-east-1a
+    target:
+      name: nats
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: topology.kubernetes.io/zone
+                      operator: In
+                      values:
+                        - sa-east-1b
+    target:
+      name: db-auth
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: topology.kubernetes.io/zone
+                      operator: In
+                      values:
+                        - sa-east-1b
+    target:
+      name: db-payments
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: topology.kubernetes.io/zone
+                      operator: In
+                      values:
+                        - sa-east-1c
+    target:
+      name: postgres-sts-orders
+      kind: StatefulSet
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          nodeAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              nodeSelectorTerms:
+                - matchExpressions:
+                    - key: topology.kubernetes.io/zone
+                      operator: In
+                      values:
+                        - sa-east-1c
+    target:
+      name: postgres-sts-tickets
+      kind: StatefulSet
+  # -----------------------------  Setting env in Deployments -----------------------------
+  - patch: |-
+      - op: replace
+        path: /metadata/labels/env
+        value: stage
+    target:
+      kind: Deployment
+      name: expiration-api
+  - patch: |-
+      - op: replace
+        path: /metadata/labels/env
+        value: stage
+    target:
+      kind: Deployment
+      name: auth-api
+  - patch: |-
+      - op: replace
+        path: /metadata/labels/env
+        value: stage
+    target:
+      kind: Deployment
+      name: orders-api
+  - patch: |-
+      - op: replace
+        path: /metadata/labels/env
+        value: stage
+    target:
+      kind: Deployment
+      name: tickets-api
+  - patch: |-
+      - op: replace
+        path: /metadata/labels/env
+        value: stage
+    target:
+      kind: Deployment
+      name: payments-api
+  - patch: |-
+      - op: replace
+        path: /metadata/labels/env
+        value: stage
+    target:
+      kind: Deployment
+      name: frontend
