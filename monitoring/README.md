@@ -1,6 +1,6 @@
 ## Monitoring
-Basic config for monitoring with prometheus and grafana.
-[Reference](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/)
+>Basic config for monitoring with **Prometheus** and **Grafana**.
+>[Reference](https://devopscube.com/setup-prometheus-monitoring-on-kubernetes/)
 
 #### Apply monitoring config with:
 ```shell
