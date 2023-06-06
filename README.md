@@ -10,9 +10,7 @@ deployment.
 
 For local database management, **Adminer** is used as a tool. Adminer allows users to interact with 
 and manage the databases in the project.
- 
-This project draws inspiration from the  [Microservices with Node JS and React](https://www.udemy.com/course/microservices-with-node-js-and-react/) course by Stephen Grider.
-While the project is not an exact replica of the course material, it incorporates similar principles and concepts discussed in the course.
+
 
 ---
 **Contents**
@@ -72,3 +70,7 @@ routing requests to the appropriate services within the microservices architectu
 > ### Client
 > Frontend or client:
 > - #### [client](https://github.com/jym272/ticketing-client)
+
+
+This project draws inspiration from the  [Microservices with Node JS and React](https://www.udemy.com/course/microservices-with-node-js-and-react/) course by Stephen Grider.
+While the project is not an exact replica of the course material, it incorporates similar principles and concepts discussed in the course.
