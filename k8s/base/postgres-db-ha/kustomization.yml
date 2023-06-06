@@ -1,3 +1,4 @@
+# https://devopscube.com/deploy-postgresql-statefulset/
 resources:
   - postgres-configmap-hooks.yaml
   - tickets-high-availability
